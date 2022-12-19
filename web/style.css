@@ -1,0 +1,332 @@
+@font-face {
+    font-family: Heebo;
+    src: url('./font/Heebo-VariableFont_wght.ttf');
+}
+
+:root {
+    --cultured: #F1EDEE;
+    --black-olive: #403D39;
+    --eerie-black-l: #242220;
+    --eerie-black-d: #1A1A1A;
+    --lemon: #FEF919;
+    --orange-yellow: #F3B700;
+    --burnt-orange: #C45609;
+}
+
+body {
+    font-family: 'Heebo';
+    background-color: var(--black-olive);
+    margin-top: 150px;
+    margin-bottom: 50px;
+    color: var(--cultured);
+}
+
+#header {
+    background-color: var(--eerie-black-l);
+}
+header {
+    position: fixed;
+    background-color: var(--eerie-black-l);
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 8vw;
+    padding-right: 8vw;
+}
+#footer {
+    background-color: var(--eerie-black-l);
+}
+
+footer {
+    position: fixed;
+    height: 50px;
+    background-color: var(--eerie-black-l);
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    margin-bottom: 0px;
+    padding: 8px;
+}
+
+
+::selection {
+    color: var(--black-olive);
+    background: var(--orange-yellow);
+    font-weight: bold;
+}
+
+::-moz-selection { /* Code for Firefox */
+    color: var(--black-olive);
+    background: var(--orange-yellow);
+    font-weight: bold;
+}
+
+
+footer {
+    text-align: center;
+}
+
+button {
+    background-color: inherit;
+    border: none;
+    color: inherit;
+    font-family: inherit;
+}
+
+.orange {
+    color: var(--orange-yellow);
+    transition: 0.5s;
+}
+.orange:hover {
+    color: var(--lemon);
+    transition: 1s;
+}
+
+/* L I N K */
+a {
+    font-weight: bold;
+}
+
+/* unvisited link */
+a:link {
+    color: var(--orange-yellow);
+}
+
+/* visited link */
+a:visited {
+    color: var(--orange-yellow);
+}
+
+/* mouse over link */
+a:hover {
+    color: var(--lemon);
+}
+
+/* selected link */
+a:active {
+    color: var(--burnt-orange);
+}
+/*******************************************/
+
+/* N A V   B A R */
+header nav {
+    border: 2px var(--eerie-black-d);
+    display: inline;
+}
+header nav ul {
+    margin: 0;
+    padding: 0;
+}
+header nav li {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+header nav li img {
+    vertical-align: middle;
+}
+header nav li a {
+    vertical-align: middle;
+    font-size: 1.10em;
+    text-decoration: none;
+    padding: 10px;
+    margin: 0 0 0 10px;
+    transition: 0.3s;
+}
+
+header nav li a:hover {
+    background-color: var(--eerie-black-d);
+    border-radius: 2px;
+    transition: 0.3s;
+}
+
+.topSeparate {
+    margin-top: 2.00em;
+}
+.autoSize {
+    width: inherit;
+}
+.autoSize img {
+    width: 25%;
+}
+
+.ggSeal a:hover {
+    background-color: var(--eerie-black-l) !important;
+}
+
+.listLeft {
+    float: left;
+}
+.listRight {
+    float: right;
+}
+
+.menu {
+    float: right;
+    display: none;
+}
+
+@media only screen and (max-width: 700px) {
+    .listRight {
+        display: none;
+    }
+    .logo img {
+        content: url('./img/logo.png')
+    }
+    .logo a:hover {
+        background-color: var(--eerie-black-l) !important;
+    }
+    .menu {
+        display: inline;
+    }
+}
+/*******************************************/
+
+/* M E N U */
+.overlay {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    right: 0;
+    background-color: rgba(26,26,26, 0.8); /* eerie-black-d */
+    overflow-x: hidden;
+    transition: 0.4s;
+}
+
+.overlay-content {
+    position: relative;
+    top: 25%;
+    width: 100%;
+    text-align: center;
+    margin-top: 30px;
+}
+
+.overlay a {
+    padding: 8px;
+    text-decoration: none;
+    font-size: 36px;
+    color: var(--orange-yellow);
+    display: block;
+    transition: 0.1s;
+}
+
+.overlay a:hover, .overlay a:focus {
+    color: var(--lemon);
+}
+
+.overlay .closebtn {
+    position: absolute;
+    top: 20px;
+    right: 45px;
+    font-size: 60px;
+}
+/*******************************************/
+
+/* F I L E   U P L O A D */
+/* #dropContainer *:-moz-drag-over {pointer-events: none;} */
+
+.dropContainer {
+    border: 2px dashed var(--eerie-black-d);
+    border-radius: 2px;
+    margin: 20px;
+    height: 55vh;
+    background-image: url('./img/logo_outlines.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 35vh;
+    text-align: center;
+    position: relative;
+    padding: 0;
+    transition: 0.2s;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.btn-upload {
+    border: 2px solid var(--cultured);
+    border-radius: 2px;
+    font-size: 1.6em;
+    padding: 6px 12px;
+    cursor: pointer;
+    margin: 0;
+    transition: 0.2s;
+}
+.btn-upload:hover {
+    border-color: var(--orange-yellow);
+    color: var(--orange-yellow);
+    border-radius: 0;
+    transition: 0.2s;
+}
+
+.btn-download {
+    border-radius: 2px;
+    color: var(--eerie-black-d);
+    background-color: var(--orange-yellow);
+    font-size: 2em;
+    font-weight: bold;
+    padding: 6px 12px;
+    cursor: pointer;
+    margin: 0;
+    transition: 0.2s;
+}
+.btn-download:hover {
+    background-color: var(--burnt-orange);
+    transition: 0.2s;
+}
+.btn-download span {
+    color: var(--black-olive);
+    transition: 0.5s;
+}
+.btn-download span:hover {
+    color: var(--lemon);
+    transition: 1s;
+}
+
+.dropContainer div {
+    position: absolute;
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    margin: 0;
+}
+
+.dropContainer div ul {
+    list-style-type: none;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+.dropContainer div ul li {
+    margin: 0;
+    margin-bottom: 2vh;
+}
+
+@media only screen and (max-width: 350px) {
+    .dropContainer {
+        background-size: 20vh;
+    }
+    .btn-upload {
+        font-size: 1.6em;
+    }    
+    .btn-download {
+        font-size: 1.6em;
+    }
+}
+
+@media (pointer:none), (pointer:coarse) {
+    .dropContainer {
+        border-style: solid;
+    }
+    .btn-upload {
+        background-color: rgb(26,26,26, 0.7);
+    }
+}
+/*******************************************/

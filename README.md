@@ -1,0 +1,5 @@
+# Drag-n-Share
+
+Have you ever wanted to transfer a file or text from your phone to your laptop or vice versa? If you have, you might have realized, that there is just no proper way of sharing data between 2 devices these days – especially, if they are not your personal ones. USB-sticks and all other physical transfer mechanisms are out-dated and few people have one with them all the time. And if they do, it's pretty hard to connect one to your phone. Writing yourself an email is an option, if you happen to be logged in on both devices. If you're on your company's PC, for instance, you might not want to sign in to your personal accounts (also including cloud services).
+
+That's where Drag-n-Share comes into play. Sharing files or text was never easier! You just drag the file into the website, give it a name, and voilà! Now you have access to it from anywhere else with an internet connection. Your data and privacy are taken care of, due to industry standard security mechanisms. It's 100% free and open-source; there's really no reason not to use it (other than it still being in development at the moment).
