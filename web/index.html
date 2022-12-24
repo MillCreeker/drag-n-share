@@ -6,31 +6,31 @@
         <title>Drag-n-Share</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="./style.css">
+        <link rel="stylesheet" href="./style/style.css">
         <link rel="icon" href="./img/favicon.ico">
     </head>
     <header role="banner">
         <nav id="navigation" role="navigation">
             <ul class="listLeft">
                 <li class="logo">
-                    <a href="https://drag-n-share.com">
+                    <a id="nav-logo" href="https://drag-n-share.com">
                         <img height="65em" alt="Drag-n-Share" src="./img/logo_horizontal_light.png">
                     </a>
                 </li>
             </ul>
             <ul class="listRight">
-                <li><a href="#support">Support</a></li>
-                <li><a href="#about">About</a></li>
+                <li><a id="nav-support" href="https://drag-n-share.com/support">Support</a></li>
+                <li><a id="nav-about" href="https://drag-n-share.com/about">About</a></li>
                 <li class="ggSeal">
-                    <a href="#" onclick="DNS.ggs_ggseal()">
+                    <a id="nav-seal" href="" onclick="ggs_ggseal()">
                         <img height="65em" alt="GreenGeeks Seal" src="https://static.greengeeks.com/ggseal/Green_2.png">
                     </a>
                 </li>
             </ul>
             <ul class="menu">
                 <li>
-                    <button onclick="DNS.openMenu()" type="button">
-                        <img height="65em" alt=":::" src="./img/menu_icon.png">
+                    <button type="button" id="btn-menu" onclick="openMenu()">
+                        <img height="65em" alt="&ctdot;" src="./img/menu_icon.png">
                     </button>
                 </li>
             </ul>
@@ -38,11 +38,11 @@
     </header>
     <body>
         <div id="menu" class="overlay">
-            <a onclick="DNS.closeNav()">&times;</a>
+            <a onclick="closeNav()">&times;</a>
             <div class="overlay-content">
-            <a href="#support">Support</a>
-            <a href="#about">About</a>
-            <a href="#" onclick="DNS.ggs_ggseal()">
+            <a id="menu-support" href="https://drag-n-share.com/support">Support</a>
+            <a id="menu-about" href="https://drag-n-share.com/about">About</a>
+            <a id="menu-seal" href="#" onclick="ggs_ggseal()">
                 <img height="80em" alt="GreenGeeks Seal" src="https://static.greengeeks.com/ggseal/Green_2.png">
             </a>
             </div>
@@ -51,19 +51,50 @@
         <div id="dropContainer" class="dropContainer">
             <div>
                 <ul id="dropList">
-                    <li>
-                        <label class="btn-upload">
-                            <input id="file-upload" type="file" />
-                            Upload...
+                    <li id="list-text-name" style="display:none">
+                        <label class="text-name">
+                            <input id="text-name" type="text" placeholder="Name" maxlength="255"/>
                         </label>
                     </li>
-                    <li>
-                        <button type="button" class="btn-download">Dow<span>n</span>load File</button>
+                    <li id="list-data-textarea" style="display:none">
+                        <textarea id="data-textarea" name="data-textarea" rows="4" cols="50" placeholder="Share your Text here"></textarea>
+                    </li>
+                    <li id="list-btn-upload">
+                        <label class="btn-upload">
+                            <input id="file-upload" type="file" />
+                            &#x21EA; Upload...
+                        </label>
+                    </li>
+                    <li id="list-btn-text-only">
+                        <button type="button" id="btn-text-only" class="btn-emphasized" onclick="DNS.changeMode('text-only')">Text only</button>
+                    </li>
+                    <li id="list-btn-overview" style="display:none">
+                        <button type="button" id="btn-overview" class="btn-emphasized" onclick="DNS.changeMode('overview')">&#x2ba8; Overview</button>
+                    </li>
+                    <li id="list-btn-access">
+                        <button type="button" id="btn-access" class="btn-emphasized" onclick="DNS.accessData()">Access Data</button>
                     </li>
                 </ul>
             </div>
         </div>
+        <p class="tutorial">
+            Not sure how it works? Check out
+            <a href="https://drag-n-share.com/tutorial">
+                this tutorial
+            </a>
+        </p>
         
+
+        <div id="cookie-banner" class="cookie-banner">
+            <p>
+                This website uses exactly 1 cookie for it to work and another one to rememeber you read this.
+                <button type="button" onclick="DNS.closeCookieBanner()">
+                    I understand
+                </button>
+            </p>
+        </div>
+
+        <script src="./src/menu.js" async defer></script>
         <script src="./src/index.js" async defer></script>
     </body>
     <footer>

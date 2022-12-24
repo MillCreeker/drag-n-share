@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Drag-n-Share</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="./style/style.css">
+        <link rel="icon" href="./img/favicon.ico">
+    </head>
+    <header role="banner">
+        <nav id="navigation" role="navigation">
+            <ul class="listLeft">
+                <li class="logo">
+                    <a href="https://drag-n-share.com">
+                        <img height="65em" alt="Drag-n-Share" src="./img/logo_horizontal_light.png">
+                    </a>
+                </li>
+            </ul>
+            <ul class="listRight">
+                <li><a href="https://drag-n-share.com/support">Support</a></li>
+                <li><a href="https://drag-n-share.com/about">About</a></li>
+                <li class="ggSeal">
+                    <a href="" onclick="ggs_ggseal()">
+                        <img height="65em" alt="GreenGeeks Seal" src="https://static.greengeeks.com/ggseal/Green_2.png">
+                    </a>
+                </li>
+            </ul>
+            <ul class="menu">
+                <li>
+                    <button onclick="openMenu()" type="button">
+                        <img height="65em" alt="MENU" src="./img/menu_icon.png">
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <body>
+        <div id="menu" class="overlay">
+            <a onclick="closeNav()">&times;</a>
+            <div class="overlay-content">
+            <a href="https://drag-n-share.com/support">Support</a>
+            <a href="https://drag-n-share.com/about">About</a>
+            <a href="#" onclick="ggs_ggseal()">
+                <img height="80em" alt="GreenGeeks Seal" src="https://static.greengeeks.com/ggseal/Green_2.png">
+            </a>
+            </div>
+        </div>
+
+        <p>Coming soon ...</p>
+        
+
+        <script src="./src/menu.js" async defer></script>
+        <script src="./src/accesss_data.js" async defer></script>
+    </body>
+    <footer>
+        <p>Copyright &copy; 2022 - Drag-<span class="orange">n</span>-Share</p>
+    </footer>
+</html>

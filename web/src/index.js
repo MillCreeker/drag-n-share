@@ -9,17 +9,33 @@ DNS.colors = {
     'orange-yellow': '#F3B700',
     'burnt-orange': '#C45609'
 };
+DNS.modes = {
+    overview: 'overview',
+    fileUpload: 'file-upload',
+    textOnly: 'text-only'
+}
 
-DNS.ggs_ggseal = function() {
-    window.open("https://my.greengeeks.com/seal/","_blank")
+DNS.textOnlyMode = false;
+DNS.mode = DNS.modes.overview;
+
+
+DNS.init = function() {
+    if (DNS.getCookieValue('readCookieDisclaimer') === 'true') {
+        const banner = document.getElementById('cookie-banner');
+        banner.style.display = 'none';
+    }
 };
 
-DNS.openMenu = function() {
-    document.getElementById("menu").style.width = "100%";
-};
+DNS.getCookieValue = function(cookie) {
+    const cookies = document.cookie;
+    const regex = new RegExp(`${cookie}=([\\w]+)[,;]`,'g');
+    const matches = regex.exec(cookies);
 
-DNS.closeNav = function() {
-    document.getElementById("menu").style.width = "0%";
+    if (matches == null || matches.length < 2) {
+        return undefined;
+    }
+
+    return matches[1];
 };
 
 
@@ -30,10 +46,11 @@ dropContainer.ondragenter = function(evt) {
     const dropContainer = document.getElementById("dropContainer");
 
     const children = dropContainer.getElementsByTagName('*');
-    for (i in children) {
+    for (let i in children) {
         try {
             const child = children[i];
             child.style['pointer-events'] = 'none';
+            child.style['-moz-drag-over'] = 'none';
             child.style.opacity = 0.8;
         } catch (e) {}
     }
@@ -53,10 +70,11 @@ dropContainer.ondragleave = function(evt) {
     const dropContainer = document.getElementById("dropContainer");
 
     const children = dropContainer.getElementsByTagName('*');
-    for (i in children) {
+    for (let i in children) {
         try {
             const child = children[i];
             child.style['pointer-events'] = '';
+            child.style['-moz-drag-over'] = '';
             child.style.opacity = 1;
         } catch (e) {}
     }
@@ -85,6 +103,8 @@ dropContainer.ondragover = function(evt) {
 
 dropContainer.ondrop = function(evt) {
     evt.preventDefault();
+
+    DNS.changeMode(DNS.modes.fileUpload);
     // // pretty simple -- but not for IE :(
     // fileInput.files = evt.dataTransfer.files;
     
@@ -94,3 +114,110 @@ dropContainer.ondrop = function(evt) {
     // dT.items.add(evt.dataTransfer.files[3]);
     // fileInput.files = dT.files;
 };
+
+
+DNS.changeMode = function(mode) {
+    if (mode === DNS.mode) {
+        return;
+    }
+
+    const displayOptions = {
+        'overview': [
+            'btn-upload',
+            'btn-text-only',
+            'btn-access'
+        ],
+        'file-upload': [
+            'btn-overview'
+        ],
+        'text-only': [
+            'text-name',
+            'data-textarea',
+            'btn-overview'
+        ]
+    };
+
+    var mode = mode
+    Object.keys(displayOptions).forEach(key => {
+        const arr = displayOptions[key];
+        for (let i in arr) {
+            const elem = `list-${arr[i]}`;
+            document.getElementById(elem).style
+                .display = key === mode ? 'block' : 'none';
+        }
+    });
+
+
+    const listTextName = document.getElementById('list-text-name');
+    if (listTextName.style.display === 'block') {
+        const textName = document.getElementById('text-name');
+        textName.focus();
+    }
+
+    DNS.mode = mode;
+};
+
+DNS.switchTextOnlyMode = function() {
+    const textOnlyDisplay = [
+        'list-name',
+        'list-textarea'
+    ];
+    const fileUploadDisplay = [
+        'list-btn-upload'
+    ];
+
+    const isTextOnly = !DNS.textOnlyMode;
+    const btnTextOnly = document.getElementById('btn-text-only');
+    btnTextOnly.innerHTML = isTextOnly ? '&#x1F5D8; Overview' : '&#x1F5D8; Text only';
+
+    for (let i in textOnlyDisplay) {
+        const elem = textOnlyDisplay[i];
+        document
+            .getElementById(elem)
+            .style
+            .display = isTextOnly ? 'block' : 'none';
+    }
+    for (let i in fileUploadDisplay) {
+        const elem = fileUploadDisplay[i];
+        document
+            .getElementById(elem)
+            .style
+            .display = isTextOnly ? 'none' : 'block';
+    }
+
+    btnTextOnly.blur();
+
+    if (isTextOnly === true) {
+        const textName = document.getElementById('text-name');
+        textName.focus();
+    }
+
+    DNS.textOnlyMode = isTextOnly;
+};
+
+
+DNS.accessData = function() {
+    window.open('https://drag-n-share.com/access_data');
+};
+
+
+
+DNS.closeCookieBanner = function() {
+    const banner = document.getElementById('cookie-banner');
+    banner.style.display = 'none';
+
+    const today = new Date();
+    const curYear = today.getFullYear();
+    const nextYear = new Date(today.setFullYear(curYear + 1));
+
+    document.cookie = `readCookieDisclaimer=true, expires=${nextYear}`;
+};
+
+
+
+
+
+
+
+
+DNS.init();
