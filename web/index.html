@@ -48,6 +48,7 @@
             </div>
         </div>
         
+
         <div id="dropContainer" class="dropContainer">
             <div>
                 <ul id="dropList">
@@ -56,20 +57,30 @@
                             <input id="text-name" type="text" placeholder="Name" maxlength="255"/>
                         </label>
                     </li>
-                    <li id="list-data-textarea" style="display:none">
-                        <textarea id="data-textarea" name="data-textarea" rows="4" cols="50" placeholder="Share your Text here"></textarea>
+                    <li id="list-file-upload-list" style="display:none">
+                        <ul id="file-upload-list" class="file-list">
+                        </ul>
                     </li>
+                    <li id="list-data-textarea" style="display:none">
+                        <div id="div-data-textarea">
+                            <textarea id="data-textarea" name="data-textarea" rows="4" cols="30" placeholder="Share your Text here"></textarea>
+                            <button type="button" id="btn-copy-to-textarea" class="btn-bottom-right" tabindex="-1" title="Paste from clipboard" onclick="DNS.pasteClipBoardTextToElement('data-textarea')">&boxbox;</button>
+                        </div>
+                        </li>
                     <li id="list-btn-upload">
                         <label class="btn-upload">
-                            <input id="file-upload" type="file" />
+                            <input id="fileUpload" type="file" multiple/>
                             &#x21EA; Upload...
                         </label>
                     </li>
                     <li id="list-btn-text-only">
                         <button type="button" id="btn-text-only" class="btn-emphasized" onclick="DNS.changeMode('text-only')">Text only</button>
                     </li>
+                    <li id="list-btn-submit" style="display:none">
+                                <button type="button" id="btn-submit" class="btn-emphasized" onclick="DNS.submitData()">&#x2bac; Go</button>
+                    </li>
                     <li id="list-btn-overview" style="display:none">
-                        <button type="button" id="btn-overview" class="btn-emphasized" onclick="DNS.changeMode('overview')">&#x2ba8; Overview</button>
+                        <button type="button" id="btn-overview" class="btn-ghost" onclick="DNS.changeMode('overview')">&#x2ba8; Overview</button>
                     </li>
                     <li id="list-btn-access">
                         <button type="button" id="btn-access" class="btn-emphasized" onclick="DNS.accessData()">Access Data</button>

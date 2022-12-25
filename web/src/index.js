@@ -43,6 +43,9 @@ DNS.getCookieValue = function(cookie) {
 dropContainer.ondragenter = function(evt) {
     evt.preventDefault();
 
+    DNS.ondDragEnter();
+};
+DNS.ondDragEnter = function() {
     const dropContainer = document.getElementById("dropContainer");
 
     const children = dropContainer.getElementsByTagName('*');
@@ -61,12 +64,14 @@ dropContainer.ondragenter = function(evt) {
 
 dropContainer.ondragleave = function(evt) {
     evt.preventDefault();
-
     if (DNS.isInContainer(evt)) {
         console.log('e');
         return;
     }
-    
+
+    DNS.onDragLeave();
+};
+DNS.onDragLeave = function() {    
     const dropContainer = document.getElementById("dropContainer");
 
     const children = dropContainer.getElementsByTagName('*');
@@ -99,20 +104,82 @@ DNS.isInContainer = function(evt) {
 
 dropContainer.ondragover = function(evt) {
     evt.preventDefault();
-}
+};
 
 dropContainer.ondrop = function(evt) {
     evt.preventDefault();
 
+    DNS.onDragLeave();
     DNS.changeMode(DNS.modes.fileUpload);
-    // // pretty simple -- but not for IE :(
-    // fileInput.files = evt.dataTransfer.files;
     
-    // // If you want to use some of the dropped files
-    // const dT = new DataTransfer();
-    // dT.items.add(evt.dataTransfer.files[0]);
-    // dT.items.add(evt.dataTransfer.files[3]);
-    // fileInput.files = dT.files;
+    const files = evt.dataTransfer.files;
+    const dT = new DataTransfer();
+
+    for (let i=0; i<files.length; i++) {
+        const file = files[i];
+        dT.items.add(file);
+    }
+
+    const workableFiles = dT.files;
+    DNS.processFiles(workableFiles);
+};
+
+fileUpload.oninput = function(evt) {
+    DNS.changeMode(DNS.modes.fileUpload);
+    
+    const files = evt.currentTarget.files;
+    const dT = new DataTransfer();
+
+    for (let i=0; i<files.length; i++) {
+        const file = files[i];
+        dT.items.add(file);
+    }
+
+    const workableFiles = dT.files;
+    DNS.processFiles(workableFiles);
+};
+
+DNS.processFiles = function(files) {
+    const fileList = document.getElementById('file-upload-list');
+    for (let i=0; i<files.length; i++) {
+        const file = files[i];
+
+        const listItem = DNS.createListItemForFile(`file-${i}`, file);
+
+        fileList.appendChild(listItem);
+    }
+};
+
+DNS.createListItemForFile = function(id, file) {
+    const listItem = document.createElement('li');
+    listItem.id = id;
+    listItem.innerHTML = DNS.shortenName(file.name, 10);
+    listItem.title = file.name;
+
+    return listItem;
+};
+
+DNS.shortenName = function(name, length) {
+    if (length < 8) {
+        return name;
+    }
+
+    const nameSplit = name.split('.');
+    if (nameSplit.length != 2) {
+        return name;
+    }
+
+    const fileName = nameSplit[0];
+    const fileExt = nameSplit[1];
+    
+    let shortName = `${fileName}.${fileExt}`;
+    if (shortName.length <= length) {
+        return shortName;
+    }
+
+    shortName = fileName.substring(0,length-(fileExt.length+3));
+    shortName += `...${fileExt}`;
+    return shortName;
 };
 
 
@@ -128,24 +195,30 @@ DNS.changeMode = function(mode) {
             'btn-access'
         ],
         'file-upload': [
+            'text-name',
+            'file-upload-list',
+            'btn-submit',
             'btn-overview'
         ],
         'text-only': [
             'text-name',
             'data-textarea',
+            'btn-submit',
             'btn-overview'
         ]
     };
 
-    var mode = mode
-    Object.keys(displayOptions).forEach(key => {
-        const arr = displayOptions[key];
-        for (let i in arr) {
-            const elem = `list-${arr[i]}`;
-            document.getElementById(elem).style
-                .display = key === mode ? 'block' : 'none';
-        }
-    });
+    const list = document.getElementById('dropList');
+    for (let i=0; i<list.children.length; i++) {
+        const elem = list.children[i];
+        elem.style.display = 'none';
+    }
+
+    for (let i in displayOptions[mode]) {
+        const elem = displayOptions[mode][i];
+        document.getElementById(`list-${elem}`).style
+            .display = 'block';
+    }
 
 
     const listTextName = document.getElementById('list-text-name');
@@ -157,42 +230,21 @@ DNS.changeMode = function(mode) {
     DNS.mode = mode;
 };
 
-DNS.switchTextOnlyMode = function() {
-    const textOnlyDisplay = [
-        'list-name',
-        'list-textarea'
-    ];
-    const fileUploadDisplay = [
-        'list-btn-upload'
-    ];
 
-    const isTextOnly = !DNS.textOnlyMode;
-    const btnTextOnly = document.getElementById('btn-text-only');
-    btnTextOnly.innerHTML = isTextOnly ? '&#x1F5D8; Overview' : '&#x1F5D8; Text only';
+DNS.pasteClipBoardTextToElement = function (element) {
+    navigator.clipboard.readText()
+        .then(text => {
+            const elem = document.getElementById(element);
+            elem.innerHTML = text;
+        })
+        .catch(err => {
+            console.error('Failed to read clipboard contents: ', err);
+        });
+};
 
-    for (let i in textOnlyDisplay) {
-        const elem = textOnlyDisplay[i];
-        document
-            .getElementById(elem)
-            .style
-            .display = isTextOnly ? 'block' : 'none';
-    }
-    for (let i in fileUploadDisplay) {
-        const elem = fileUploadDisplay[i];
-        document
-            .getElementById(elem)
-            .style
-            .display = isTextOnly ? 'none' : 'block';
-    }
 
-    btnTextOnly.blur();
-
-    if (isTextOnly === true) {
-        const textName = document.getElementById('text-name');
-        textName.focus();
-    }
-
-    DNS.textOnlyMode = isTextOnly;
+DNS.submitData = function() {
+    // TODO
 };
 
 
