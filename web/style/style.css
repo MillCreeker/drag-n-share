@@ -11,6 +11,8 @@
     --lemon: #FEF919;
     --orange-yellow: #F3B700;
     --burnt-orange: #C45609;
+    --maximum-red: #D62828;
+    --middle-green: #488B49;
 }
 
 body {
@@ -310,7 +312,7 @@ input[type="text"], textarea {
     border-radius: 2px;
     font-size: 1.5em;
     padding: 3px;
-    max-width: 50vw;
+    max-width: 70vw;
     min-width: 30vw;
     outline: none;
     transition: 0.2s;
@@ -331,6 +333,31 @@ input[type="file"] {
     padding-left: 5px;
     padding-right: 5px;
     color: var(--cultured);
+}
+
+.fileAdd {
+    font-size: 1.5em;
+    color: var(--cultured);
+
+    padding-left: 0.45em;
+    padding-right: 0.45em;
+
+    border-style: dashed;
+    border-width: 3px;
+    border-radius: 50%;
+    border-color: var(--orange-yellow);
+
+    transition: 0.2s;
+}
+.fileAdd:hover {
+    background-color: rgba(243,183,0, 0.2);
+    border-style: solid;
+
+    transition: 0.2s;
+}
+.fileAdd:active {
+    background-color: rgba(254,249,25, 0.2);
+    border-color: var(--lemon);
 }
 
 textarea {

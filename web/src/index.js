@@ -1,22 +1,25 @@
 const DNS = {};
 
-DNS.colors = {
+DNS.COLORS = {
     'cultured': '#F1EDEE',
     'black-olive': '#403D39',
     'eerie-black-l': '#242220',
     'eerie-black-d': '#1A1A1A',
     'lemon': '#FEF919',
     'orange-yellow': '#F3B700',
-    'burnt-orange': '#C45609'
+    'burnt-orange': '#C45609',
+    'maximun-red': '#D62828',
+    'middle-green': '#488B49'
 };
-DNS.modes = {
+DNS.MODES = {
     overview: 'overview',
     fileUpload: 'file-upload',
     textOnly: 'text-only'
 }
 
-DNS.textOnlyMode = false;
-DNS.mode = DNS.modes.overview;
+DNS.files = [];
+
+DNS.mode = DNS.MODES.overview;
 
 
 DNS.init = function() {
@@ -58,7 +61,7 @@ DNS.ondDragEnter = function() {
         } catch (e) {}
     }
 
-    dropContainer.style['border-color'] = DNS.colors.lemon;
+    dropContainer.style['border-color'] = DNS.COLORS.lemon;
     dropContainer.style['background-image'] = "url('./img/logo_outlines_lemon.png')";
 };
 
@@ -84,7 +87,7 @@ DNS.onDragLeave = function() {
         } catch (e) {}
     }
 
-    dropContainer.style['border-color'] = DNS.colors["eerie-black-d"];
+    dropContainer.style['border-color'] = DNS.COLORS["eerie-black-d"];
     dropContainer.style['background-image'] = "url('./img/logo_outlines.png')";
 };
 
@@ -110,7 +113,7 @@ dropContainer.ondrop = function(evt) {
     evt.preventDefault();
 
     DNS.onDragLeave();
-    DNS.changeMode(DNS.modes.fileUpload);
+    DNS.changeMode(DNS.MODES.fileUpload);
     
     const files = evt.dataTransfer.files;
     const dT = new DataTransfer();
@@ -124,8 +127,20 @@ dropContainer.ondrop = function(evt) {
     DNS.processFiles(workableFiles);
 };
 
+fileUpload.onclick = function() {
+    this.value = null;
+};
 fileUpload.oninput = function(evt) {
-    DNS.changeMode(DNS.modes.fileUpload);
+    DNS.addFiles(evt);
+};
+fileAdd.onclick = function() {
+    this.value = null;
+};
+fileAdd.oninput = function(evt) {
+    DNS.addFiles(evt);
+};
+DNS.addFiles = function(evt) {
+    DNS.changeMode(DNS.MODES.fileUpload);
     
     const files = evt.currentTarget.files;
     const dT = new DataTransfer();
@@ -146,7 +161,8 @@ DNS.processFiles = function(files) {
 
         const listItem = DNS.createListItemForFile(`file-${i}`, file);
 
-        fileList.appendChild(listItem);
+        fileList.insertBefore(listItem, fileList.children[fileList.children.length-1]);
+        DNS.files.push(file);
     }
 };
 
@@ -188,6 +204,28 @@ DNS.changeMode = function(mode) {
         return;
     }
 
+    // delte data
+    const emptyElements = [
+        'text-name',
+        'data-textarea'
+    ];
+    for (let i in emptyElements) {
+        const elem = document.getElementById(emptyElements[i]);
+        elem.value = '';
+    }
+
+    const fileList = document.getElementById('file-upload-list');
+    const listChildren = fileList.children.length;
+    for (let i=0; i<listChildren; i++) {
+        if (fileList.firstChild.id == 'file-upload-add') {
+            continue;
+        }
+
+        fileList.removeChild(fileList.firstChild);
+    }
+    DNS.files.length = 0;
+
+    // display fields
     const displayOptions = {
         'overview': [
             'btn-upload',
@@ -220,7 +258,7 @@ DNS.changeMode = function(mode) {
             .display = 'block';
     }
 
-
+    // focus title
     const listTextName = document.getElementById('list-text-name');
     if (listTextName.style.display === 'block') {
         const textName = document.getElementById('text-name');
@@ -245,6 +283,8 @@ DNS.pasteClipBoardTextToElement = function (element) {
 
 DNS.submitData = function() {
     // TODO
+    // https://stackoverflow.com/questions/247483/http-get-request-in-javascript
+    // POST post
 };
 
 
