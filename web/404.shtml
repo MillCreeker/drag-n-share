@@ -47,6 +47,15 @@
             </a>
             </div>
         </div>
+
+        <div class="paragraph">
+            <br>
+            <br>
+            <br>
+            <h1 class="heading-emphasized">404</h1>
+            <h2>Seems like something went wrong ...</h2>
+            <h3>Return to <a href="https://www.drag-n-share.com">main page &#x2ba9;</a></h3>
+        </div>
         
 
         <script src="./src/menu.js" async defer></script>

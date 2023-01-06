@@ -22,6 +22,11 @@ class API:
     def run(self):
         app = Flask(__name__)
 
+        @app.route('/ping', methods=['GET'])
+        def ping():
+            timestamp = time.time()
+            return str(timestamp)
+        
         @app.route('/', methods=['GET'])
         def home_page():
             data_set = {'Page': 'Home', 'Message': 'Success', 'Timestamp': time.time()}

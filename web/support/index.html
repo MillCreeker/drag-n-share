@@ -6,15 +6,15 @@
         <title>Drag-n-Share</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="./style/style.css">
-        <link rel="icon" href="./img/favicon.ico">
+        <link rel="stylesheet" href="../style/style.css">
+        <link rel="icon" href="../img/favicon.ico">
     </head>
     <header role="banner">
         <nav id="navigation" role="navigation">
             <ul class="listLeft">
                 <li class="logo">
                     <a href="https://drag-n-share.com">
-                        <img height="65em" alt="Drag-n-Share" src="./img/logo_horizontal_light.png">
+                        <img height="65em" alt="Drag-n-Share" src="../img/logo_horizontal_light.png">
                     </a>
                 </li>
             </ul>
@@ -30,13 +30,13 @@
             <ul class="menu">
                 <li>
                     <button onclick="openMenu()" type="button">
-                        <img height="65em" alt="MENU" src="./img/menu_icon.png">
+                        <img height="65em" alt="MENU" src="../img/menu_icon.png">
                     </button>
                 </li>
             </ul>
         </nav>
     </header>
-    <body>
+    <body class="background-img">
         <div id="menu" class="overlay">
             <a onclick="closeNav()">&times;</a>
             <div class="overlay-content">
@@ -48,11 +48,12 @@
             </div>
         </div>
 
-        <p>Coming soon ...</p>
+        <div class="paragraph">
+            
+        </div>
         
 
-        <script src="./src/menu.js" async defer></script>
-        <script src="./src/tutorial.js" async defer></script>
+        <script src="../src/menu.js" async defer></script>
     </body>
     <footer>
         <p>Copyright &copy; 2022 - Drag-<span class="orange">n</span>-Share</p>

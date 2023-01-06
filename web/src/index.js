@@ -16,8 +16,10 @@ DNS.MODES = {
     fileUpload: 'file-upload',
     textOnly: 'text-only'
 }
+DNS.MAX_FILES = 4;
 
 DNS.files = [];
+DNS.selectedFile = null;
 
 DNS.mode = DNS.MODES.overview;
 
@@ -55,10 +57,12 @@ DNS.ondDragEnter = function() {
     for (let i in children) {
         try {
             const child = children[i];
-            child.style['pointer-events'] = 'none';
-            child.style['-moz-drag-over'] = 'none';
-            child.style.opacity = 0.8;
+            DNS.disableElement(child.id);
         } catch (e) {}
+    }
+
+    if (DNS.files.length >= DNS.MAX_FILES) {
+        return;
     }
 
     dropContainer.style['border-color'] = DNS.COLORS.lemon;
@@ -68,7 +72,6 @@ DNS.ondDragEnter = function() {
 dropContainer.ondragleave = function(evt) {
     evt.preventDefault();
     if (DNS.isInContainer(evt)) {
-        console.log('e');
         return;
     }
 
@@ -81,14 +84,16 @@ DNS.onDragLeave = function() {
     for (let i in children) {
         try {
             const child = children[i];
-            child.style['pointer-events'] = '';
-            child.style['-moz-drag-over'] = '';
-            child.style.opacity = 1;
+            DNS.enableElement(child.id);
         } catch (e) {}
     }
 
     dropContainer.style['border-color'] = DNS.COLORS["eerie-black-d"];
     dropContainer.style['background-image'] = "url('./img/logo_outlines.png')";
+
+    if (DNS.files.length >= DNS.MAX_FILES) {
+        this.disableElement('file-upload-add');
+    }
 };
 
 DNS.isInContainer = function(evt) {
@@ -107,6 +112,8 @@ DNS.isInContainer = function(evt) {
 
 dropContainer.ondragover = function(evt) {
     evt.preventDefault();
+
+    DNS.closeDeleteDialogForFile();
 };
 
 dropContainer.ondrop = function(evt) {
@@ -156,21 +163,49 @@ DNS.addFiles = function(evt) {
 
 DNS.processFiles = function(files) {
     const fileList = document.getElementById('file-upload-list');
+    
     for (let i=0; i<files.length; i++) {
-        const file = files[i];
+        if (DNS.files.length == DNS.MAX_FILES-1) {
+            DNS.disableElement('file-upload-add');
+        }
+        if (DNS.files.length == DNS.MAX_FILES) {
+            window.alert(`Maximum number of files (${DNS.MAX_FILES}) exceeded`);
+            DNS.disableElement('file-upload-add');
+            break;
+        }
 
-        const listItem = DNS.createListItemForFile(`file-${i}`, file);
+        const file = files[i];
+        const number = DNS.files.length;
+        const listItem = DNS.createListItemForFile(`file-${number}`, file);
 
         fileList.insertBefore(listItem, fileList.children[fileList.children.length-1]);
         DNS.files.push(file);
     }
+
+    DNS.focusTitle();
+
+    DNS.checkGoButtonEnabled();
 };
 
 DNS.createListItemForFile = function(id, file) {
     const listItem = document.createElement('li');
     listItem.id = id;
-    listItem.innerHTML = DNS.shortenName(file.name, 10);
+    listItem.classList.add('file-list-item');
     listItem.title = file.name;
+
+    const img = document.createElement('img');
+    img.alt = 'file';
+    img.src = '../img/file-white.png';
+    img.style.width = '4vh';
+    listItem.appendChild(img);
+
+    const text = document.createElement('p');
+    text.innerHTML = DNS.shortenName(file.name, 12);
+    listItem.appendChild(text);
+
+    listItem.onclick = function(evt) {
+        DNS.showDeleteDialogForFile(evt);
+    };
 
     return listItem;
 };
@@ -198,13 +233,93 @@ DNS.shortenName = function(name, length) {
     return shortName;
 };
 
+DNS.isFileSelected = false;
+DNS.showDeleteDialogForFile = function(evt) {
+    const msgBox = document.getElementById('msg-box-delete');
+    if (msgBox.style.display != 'none') {
+        DNS.closeDeleteDialogForFile();
+        return;
+    };
+
+    const glassPlate = document.createElement('div');
+    glassPlate.classList.add('glass-plate');
+    glassPlate.id = 'glass-plate';
+    glassPlate.onclick = function() {
+        DNS.closeDeleteDialogForFile();
+    };
+    document.body.appendChild(glassPlate);
+
+    const id = evt.currentTarget.id;
+    DNS.selectedFile = id;
+
+    DNS.showElement('msg-box-delete');
+
+    DNS.isFileSelected = true;
+};
+
+DNS.closeDeleteDialogForFile = function() {
+    DNS.hideElement('msg-box-delete');
+    const plate = document.getElementById('glass-plate');
+    if (plate != null) {
+        document.body.removeChild(plate);
+    }
+
+    DNS.focusTitle();
+
+    DNS.selectedFile = null;
+    DNS.isFileSelected = false;
+
+    DNS.checkGoButtonEnabled();
+};
+
+DNS.deleteFile = function() {
+    if (DNS.selectedFile == null) {
+        DNS.closeDeleteDialogForFile();
+        return;
+    }
+
+    const regex = new RegExp('file-(\\d+)');
+    const match = regex.exec(DNS.selectedFile);
+    if (match.length != 2) {
+        DNS.closeDeleteDialogForFile();
+        return;
+    }
+    const index = match[1];
+    
+    const fileList = document.getElementById('file-upload-list');
+    const deletedFile = document.getElementById(DNS.selectedFile);
+    fileList.removeChild(deletedFile);
+
+    DNS.files.splice(index, 1);
+    
+    for (let i=index; i<fileList.children.length-1; i++) {
+        const elem = fileList.children[i];
+        elem.id = `file-${i}`;
+    }
+
+    if (DNS.files.length <= DNS.MAX_FILES) {
+        DNS.enableElement('file-upload-add');
+    }
+
+    DNS.closeDeleteDialogForFile();
+};
+
+DNS.showElement = function(element) {
+    const elem = document.getElementById(element);
+    elem.style.display = 'block';
+};
+DNS.hideElement = function(element) {
+    const elem = document.getElementById(element);
+    elem.style.display = 'none';
+};
+
 
 DNS.changeMode = function(mode) {
     if (mode === DNS.mode) {
         return;
     }
 
-    // delte data
+    // delete data
     const emptyElements = [
         'text-name',
         'data-textarea'
@@ -224,6 +339,8 @@ DNS.changeMode = function(mode) {
         fileList.removeChild(fileList.firstChild);
     }
     DNS.files.length = 0;
+
+    DNS.enableElement('file-upload-add');
 
     // display fields
     const displayOptions = {
@@ -258,14 +375,36 @@ DNS.changeMode = function(mode) {
             .display = 'block';
     }
 
-    // focus title
+    DNS.focusTitle();
+
+    DNS.mode = mode;
+
+    DNS.checkGoButtonEnabled();
+};
+
+DNS.focusTitle = function() {
     const listTextName = document.getElementById('list-text-name');
     if (listTextName.style.display === 'block') {
         const textName = document.getElementById('text-name');
         textName.focus();
     }
+};
 
-    DNS.mode = mode;
+DNS.enableElement = function(element) {
+    const elem = document.getElementById(element);
+
+    elem.disabled = false;
+    elem.style['pointer-events'] = '';
+    elem.style['-moz-drag-over'] = '';
+    elem.style.opacity = 1;
+};
+DNS.disableElement = function(element) {
+    const elem = document.getElementById(element);
+
+    elem.disabled = true;
+    elem.style['pointer-events'] = 'none';
+    elem.style['-moz-drag-over'] = 'none';
+    elem.style.opacity = 0.7;
 };
 
 
@@ -273,20 +412,84 @@ DNS.pasteClipBoardTextToElement = function (element) {
     navigator.clipboard.readText()
         .then(text => {
             const elem = document.getElementById(element);
-            elem.innerHTML = text;
+            elem.value = text;
+            elem.focus();
+
+            DNS.checkGoButtonEnabled();
         })
         .catch(err => {
             console.error('Failed to read clipboard contents: ', err);
+            const btnPaste = document.getElementById('btn-copy-to-textarea');
+            btnPaste.style.color = DNS.COLORS['eerie-black-d'];
+            btnPaste.style.opacity = '70%';
+            btnPaste.title = 'Failed to read clipboard contents';
+            btnPaste.disabled = true;
+
+            const elem = document.getElementById(element);
+            elem.focus();
+
+            DNS.checkGoButtonEnabled();
         });
 };
 
 
+DNS.checkGoButtonEnabled = function() {
+    let isEnabled = true;
+    let title = 'Ready to share data';
+
+    if (isEnabled == true &&
+        DNS.mode == DNS.MODES.overview) {
+        isEnabled = false;
+        title = 'Not possible in this mode';
+    }
+
+    const textName = document.getElementById('text-name');
+    if (isEnabled == true &&
+        textName.value.length == 0) {
+        isEnabled = false;
+        title = 'Name missing';
+    }
+
+    if (isEnabled == true &&
+        DNS.mode == DNS.MODES.fileUpload &&
+        DNS.files.length == 0) {
+        isEnabled = false;
+        title = 'No files uploaded';
+    }
+
+    const dataText = document.getElementById('data-textarea');
+    if (isEnabled == true &&
+        DNS.mode == DNS.MODES.textOnly &&
+        dataText.value.length == 0) {
+        isEnabled = false;
+        title = 'Text missing';
+    }
+
+    const goBtn = document.getElementById('btn-submit');
+    goBtn.disabled = !isEnabled;
+    goBtn.style.opacity = isEnabled ? '100%' : '70%';
+    goBtn.title = title;
+};
+
 DNS.submitData = function() {
+    DNS.httpGetAsync('ping', function(resp) {
+        window.alert(resp);
+    });
     // TODO
     // https://stackoverflow.com/questions/247483/http-get-request-in-javascript
     // POST post
 };
 
+DNS.httpGetAsync = function (apiCall, callback)
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            callback(xmlHttp.responseText);
+    }
+    xmlHttp.open('GET', `http://localhost:41419/${apiCall}`, true); // true for asynchronous 
+    xmlHttp.send(null);
+}
 
 DNS.accessData = function() {
     window.open('https://drag-n-share.com/access_data');

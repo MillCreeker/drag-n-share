@@ -47,14 +47,24 @@
             </a>
             </div>
         </div>
-        
+
+        <div id="msg-box-delete" class="msg-box" style="display:none">
+            <ul>
+                <li>
+                    <button type="button" id="btn-delete-file" class="btn-reject" onclick="DNS.deleteFile()">Delete</button>
+                </li>
+                <li>
+                    <button type="button" id="btn-delete-file-cancel" class="btn-transparent" onclick=DNS.closeDeleteDialogForFile()>Cancel</button>
+                </li>
+            </ul>            
+        </div>
 
         <div id="dropContainer" class="dropContainer">
             <div>
                 <ul id="dropList">
                     <li id="list-text-name" style="display:none">
                         <label class="text-name">
-                            <input id="text-name" type="text" placeholder="Name" maxlength="255"/>
+                            <input id="text-name" type="text" placeholder="Name" maxlength="255" oninput="DNS.checkGoButtonEnabled()"/>
                         </label>
                     </li>
                     <li id="list-file-upload-list" style="display:none">
@@ -69,7 +79,7 @@
                     </li>
                     <li id="list-data-textarea" style="display:none">
                         <div id="div-data-textarea">
-                            <textarea id="data-textarea" name="data-textarea" rows="4" cols="30" placeholder="Share your Text here"></textarea>
+                            <textarea id="data-textarea" name="data-textarea" rows="4" cols="30" placeholder="Share your Text here" oninput="DNS.checkGoButtonEnabled()"></textarea>
                             <button type="button" id="btn-copy-to-textarea" class="btn-bottom-right" tabindex="-1" title="Paste from clipboard" onclick="DNS.pasteClipBoardTextToElement('data-textarea')">&boxbox;</button>
                         </div>
                         </li>

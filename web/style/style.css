@@ -43,14 +43,21 @@ header {
 
 footer {
     position: fixed;
-    height: 50px;
+    height: 40px;
     background-color: var(--eerie-black-l);
     bottom: 0px;
     left: 0px;
     right: 0px;
     margin-bottom: 0px;
     padding: 8px;
+    padding-top: 0;
     text-align: center;
+}
+
+footer * {
+    padding: 0;
+    margin: 0;
+    margin-top: 10px;
 }
 
 ::selection {
@@ -78,6 +85,25 @@ footer {
     color: var(--eerie-black-l);
 }
 
+/* Scroll Bar */
+::-webkit-scrollbar {
+    cursor: pointer;
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    cursor: pointer;
+}
+::-webkit-scrollbar-thumb {
+    cursor: pointer;
+    background: var(--eerie-black-l);
+    border-radius: 4px;
+    transition: 0.2s;
+}
+::-webkit-scrollbar-thumb:hover {
+    cursor: pointer;
+    background: var(--eerie-black-d);
+    transition: 0.2s;
+}
 
 
 
@@ -302,6 +328,33 @@ header nav li a:hover {
     margin-bottom: 2vh;
 }
 
+.file-list-item * {
+    margin: 0;
+    padding: 0;
+    transition: 0.2s;
+}
+
+.file-list-item img {
+    -webkit-user-drag: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.file-list-item:hover {
+    color: var(--orange-yellow);
+}
+.file-list-item:hover img {
+    content: url('../img/file-orange.png');
+}
+.file-list-item:active {
+    color: var(--lemon);
+}
+.file-list-item:active img {
+    content: url('../img/file-yellow.png');
+}
+
 input[type="text"], textarea {
     font-family: 'Heebo';
     color: var(--eerie-black-d);
@@ -330,6 +383,7 @@ input[type="file"] {
 
 .file-list li {
     display: inline-block;
+    vertical-align: middle;
     padding-left: 5px;
     padding-right: 5px;
     color: var(--cultured);
@@ -452,6 +506,50 @@ textarea:focus {
     outline-offset: 2px;
 }
 
+.btn-reject {
+    background-color: var(--maximum-red);
+    color: var(--eerie-black-l);
+    border-radius: 2px;
+    font-size: 1.7em;
+    font-weight: bold;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.btn-reject:hover {
+    font-weight: normal;
+    color: var(--cultured);
+}
+.btn-reject:focus {
+    font-weight: normal;
+    color: var(--cultured);
+    outline-style: solid;
+    outline-color: var(--cultured);
+    outline-width: 2px;
+    outline-offset: 2px;
+}
+
+.btn-transparent {
+    background-color: inherit;
+    color: var(--black-olive);
+    border-radius: 2px;
+    font-size: 1.5em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.btn-transparent:hover {
+    font-weight: normal;
+    color: var(--orange-yellow);
+}
+.btn-transparent:focus {
+    font-weight: normal;
+    color: var(--orange-yellow);
+    outline-style: solid;
+    outline-color: var(--cultured);
+    outline-width: 2px;
+}
+
 
 @media only screen and (max-width: 350px) {
     .dropContainer {
@@ -472,6 +570,57 @@ textarea:focus {
     .btn-upload, .btn-ghost {
         background-color: rgb(26,26,26, 0.7);
     }
+}
+/*******************************************/
+
+/* M S G   B O X */
+.msg-box {
+    z-index: 2;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 120px;
+    width: 200px;
+    margin-top: -60px;
+    margin-left: -100px;
+    background-color: var(--eerie-black-d);
+    border-radius: 5px;
+    text-align: center;
+
+    box-shadow: 5px 5px 5px var(--eerie-black-l);
+}
+
+.msg-box ul {
+    position: relative;
+    top: 20%;
+    margin: 0 auto;
+    list-style-type: none;
+    display: inline-block;
+    padding: 0;
+    justify-items: center;
+}
+
+.msg-box ul li {
+    margin: 0;
+    padding: 0;
+    margin-bottom: 10px;
+}
+
+.msg-box ul li button {
+    font-size: 1.3em;
+}
+
+.glass-plate {
+    z-index: 1;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    top: 0;
+    left: 0;
+
+    background-color: var(--eerie-black-d);
+    opacity: 50%;
 }
 /*******************************************/
 
@@ -518,7 +667,7 @@ textarea:focus {
     left: 0px;
     right: 0px;
     bottom: 0;
-    margin-bottom: 69px;
+    margin-bottom: 49px;
     padding-top: 4px;
     padding-left: 8px;
     padding-right: 8px;
@@ -539,5 +688,23 @@ textarea:focus {
     margin-left: 10px;
     padding-left: 10px;
     padding-right: 10px;
+}
+/*******************************************/
+
+/* P A R A G R A P H */
+.paragraph {
+    width: 50%;
+    margin: auto;
+}
+
+.heading-emphasized {
+    color: var(--orange-yellow);
+    font-size: 4em;
+}
+
+@media only screen and (max-width: 700px) {
+    .paragraph {
+        width: 90%;
+    }
 }
 /*******************************************/
