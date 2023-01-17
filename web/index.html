@@ -48,13 +48,44 @@
             </div>
         </div>
 
-        <div id="msg-box-delete" class="msg-box" style="display:none">
+        <div id="busy-indicator" style="display:none">
+            <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+        </div>
+
+        <div id="msg-box-alert" class="msg-box" style="display:none">
             <ul>
                 <li>
-                    <button type="button" id="btn-delete-file" class="btn-reject" onclick="DNS.deleteFile()">Delete</button>
+                    <p id="msg-box-alert-text"></p>
                 </li>
                 <li>
-                    <button type="button" id="btn-delete-file-cancel" class="btn-transparent" onclick=DNS.closeDeleteDialogForFile()>Cancel</button>
+                    <button type="button" id="btn-msg-box-alert-close" class="btn-emphasized" onclick="DNS.closeAlert()">OK</button>
+                </li>
+            </ul>
+        </div>
+
+        <div id="msg-box-delete-file" class="msg-box" style="display:none">
+            <ul>
+                <li>
+                    <button type="button" class="btn-reject" onclick="DNS.deleteFile()">Delete</button>
+                </li>
+                <li>
+                    <button type="button" class="btn-transparent" onclick=DNS.closeDeleteDialogForFile()>Cancel</button>
+                </li>
+            </ul>            
+        </div>
+
+        <div id="msg-box-delete-data" class="msg-box" style="display:none">
+            <ul>
+                <li>
+                    <p>
+                        Delete all data?
+                    </p>
+                </li>
+                <li>
+                    <button type="button" id="btn-delete-file" class="btn-reject" onclick="DNS.deleteData()">Delete</button>
+                </li>
+                <li>
+                    <button type="button" id="btn-delete-file-cancel" class="btn-transparent" onclick=DNS.closeDeleteDataDialog()>Cancel</button>
                 </li>
             </ul>            
         </div>
@@ -62,12 +93,68 @@
         <div id="dropContainer" class="dropContainer">
             <div>
                 <ul id="dropList">
-                    <li id="list-text-name" style="display:none">
+
+                    <li id="list-text-name">
                         <label class="text-name">
-                            <input id="text-name" type="text" placeholder="Name" maxlength="255" oninput="DNS.checkGoButtonEnabled()"/>
+                            <input id="text-name" type="text" placeholder="Name" maxlength="255" oninput="DNS.checkGoButtonEnabled();DNS.checkSearchButtonEnabled()"/>
                         </label>
                     </li>
-                    <li id="list-file-upload-list" style="display:none">
+
+                    <li id="list-btn-search">
+                        <button type="button" id="btn-search" class="btn-emphasized" onclick="DNS.searchName()">&#x2bab; Search</button>
+                    </li>
+
+                    <li id="list-access-key-search-field">
+                        <label>
+                            <input id="access-key-search-field" type="text" placeholder="XXX XXX" maxlength="7" oninput="DNS.onInputAccessKeySearchField()"/>
+                        </label>
+                    </li>
+
+                    <li id="list-access-key-search-btn">
+                        <button type="button" id="access-key-search-btn" class="btn-emphasized" onclick="DNS.validateKey()">&#x2ba9; Access Data</button>
+                    </li>
+
+                    <li id="list-access-key">
+                        <h1 id="access-key" class="access-key"></h1>
+                    </li>
+
+                    <li id="list-more-options">
+                        <button type="button" id="more-options" class="btn-emphasized" onclick="DNS.showMoreOptions()">More Options</button>
+                    </li>
+
+                    <li id="list-data-sent-options">
+                        <ul id="data-sent-options">
+                            <li>
+                                <button id="btn-refresh" type="button" class="btn-emphasized" title="Rename and refresh key" onclick="DNS.refresh()">&circlearrowleft;</button>
+                            </li>
+                            <li>
+                                <button type="button" class="btn-reject" title="Delete data" onclick="DNS.showDeleteDataDialog()">Delete</button>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li id="list-access-data-instructions">
+                        <hr>
+                        <section id="access-data-instructions">
+                            <section>
+                            <p>
+                                1) On your other device go to this website and press <span id="access-data-simulation" class="btn-emphasized" title="press this button on your other device">Access Data</span>
+                            </p>
+                            </section>
+                            <section>
+                            <p>
+                                2) Then search for the <span id="text-input-simulation" title="search in this field">Name</span> above
+                            </p>
+                            </section>
+                            <section>
+                            <p>
+                                3) Enter the <span id="access-key-simulation" class="access-key" title="enter the key">Access Key</span>
+                            </p>
+                            </section>
+                        </section>
+                    </li>
+
+                    <li id="list-file-upload-list">
                         <ul id="file-upload-list" class="file-list">
                             <li id="file-upload-add">
                                 <label class="fileAdd" title="Add files">
@@ -77,7 +164,8 @@
                             </li>
                         </ul>
                     </li>
-                    <li id="list-data-textarea" style="display:none">
+
+                    <li id="list-data-textarea">
                         <div id="div-data-textarea">
                             <textarea id="data-textarea" name="data-textarea" rows="4" cols="30" placeholder="Share your Text here" oninput="DNS.checkGoButtonEnabled()"></textarea>
                             <button type="button" id="btn-copy-to-textarea" class="btn-bottom-right" tabindex="-1" title="Paste from clipboard" onclick="DNS.pasteClipBoardTextToElement('data-textarea')">&boxbox;</button>
@@ -89,18 +177,23 @@
                             &#x21EA; Upload...
                         </label>
                     </li>
+
                     <li id="list-btn-text-only">
                         <button type="button" id="btn-text-only" class="btn-emphasized" onclick="DNS.changeMode('text-only')">Text only</button>
                     </li>
-                    <li id="list-btn-submit" style="display:none">
+
+                    <li id="list-btn-submit">
                                 <button type="button" id="btn-submit" class="btn-emphasized" onclick="DNS.submitData()">&#x2bac; Go</button>
                     </li>
-                    <li id="list-btn-overview" style="display:none">
+
+                    <li id="list-btn-overview">
                         <button type="button" id="btn-overview" class="btn-ghost" onclick="DNS.changeMode('overview')">&#x2ba8; Overview</button>
                     </li>
+
                     <li id="list-btn-access">
                         <button type="button" id="btn-access" class="btn-emphasized" onclick="DNS.accessData()">Access Data</button>
                     </li>
+
                 </ul>
             </div>
         </div>
@@ -114,7 +207,7 @@
 
         <div id="cookie-banner" class="cookie-banner">
             <p>
-                This website uses exactly 1 cookie for it to work and another one to rememeber you read this.
+                This website uses cookies to work its magic.
                 <button type="button" onclick="DNS.closeCookieBanner()">
                     I understand
                 </button>

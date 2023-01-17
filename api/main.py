@@ -3,34 +3,22 @@ from api import API
 if __name__ == '__main__':
     api = API()
     api.run()
-
-# import mariadb.connections
-# from config import Config
-# import json
-# import time
-# import uuid
-
-
-# db_connection = mariadb.connect(
-#         host=Config.get('DB_HOST'),
-#         database=Config.get('DB_DATABASE'),
-#         user=Config.get('DB_USER'),
-#         password=Config.get('DB_PW')
-#     )
-# db_cursor = db_connection.cursor()
-
-# id = str(uuid.uuid4())
-# print(id)
-# timestamp = time.time()
-
-# db_cursor.execute(
-#     "INSERT INTO `data` (id, name) VALUES (?,?)",
-#     (id, 'test'))
-
-# db_cursor.execute(
-#     "SELECT * FROM `data` WHERE id=?",
-#     (id,))
-
-# print(db_cursor.fetchall())
-
-# db_connection.close()
+    
+    # API-Calls #
+        # upload file/text
+        #   returns creation-token + access-key
+        # change name
+        #   deletes lock-entry
+        # request access (ID + name)
+        #   gets correct + 2 random access-keys
+        #   ID + name don't exist -> error message
+        #   locked data -> error message ('data locked')
+        # refresh key
+        #   correct creation-token -> gets correct access-key
+        #   lock-entry -> gets new correct access-key; lock-entry is deleted
+        # get data
+        #   correct access-key -> file is transfered
+        #   no/wrong access-key -> lock-entry is created
+        # delete data
+        #   correct creation-token -> all data with ID deleted
+        #     (happens after 5min anyway)
