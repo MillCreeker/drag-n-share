@@ -63,30 +63,31 @@ class API:
             try:
                 body = json.loads(request.get_data())
                 
-                # error handling #
-                status = 400
-                
+                # error handling #                
                 if ('name' not in body):
-                    return 'name missing', status
+                    return 'name missing', 400
                 
                 if (body['name'] == ''):
-                    return 'name empty', status
+                    return 'name empty', 400
                 
-                if (_does_name_already_exist(body['name']) == True):
-                    return 'name already exists', 409
+                if (_does_name_exist(body['name']) == True):
+                    if (_is_name_expired(body['name']) == True):
+                        _delete_by_name(body['name'])
+                    else:
+                        return 'name already exists', 409
                 
                 if ('data' not in body):
-                    return 'data missing', status
+                    return 'data missing', 400
                 
                 if (body['data'] == ''):
-                    return 'data empty', status
+                    return 'data empty', 400
                 
                 if ('isTextOnly' not in body):
-                    return 'isTextOnly not specified', status
+                    return 'isTextOnly not specified', 400
                 
                 if (body['isTextOnly'] != True and
                     body['isTextOnly'] != False):
-                    return 'isTextOnly must be true or false', status
+                    return 'isTextOnly must be true or false', 400
                 
                 if (body['isTextOnly'] == False):
                     files = json.loads(body['data'])
@@ -112,12 +113,12 @@ class API:
                             'INSERT INTO `access` (`data-id`, `token`, `access-key`) VALUES (?,?,?)',
                         (id, token, access_key))
                 except:
-                    return 'There was an unexpected error', 500
+                    return 'An unexpected error occured', 500
                 ########################
             
                 return token
             except:
-                return 'There was an unexpected error', 500
+                return 'An unexpected error occured', 500
         
         @app.route('/get_access_key_and_name', methods=['GET'])
         def get_access_key_and_name():
@@ -144,7 +145,7 @@ class API:
                 }
                 return json.dumps(body)
             except:
-                return 'There was an unexpected error', 500
+                return 'An unexpected error occured', 500
         
         @app.route('/refresh', methods=['POST'])
         def refresh():
@@ -170,7 +171,7 @@ class API:
                     new_name != None and
                     new_name != data["name"]):
                     
-                    if (_does_name_already_exist(new_name)):
+                    if (_does_name_exist(new_name)):
                         return 'Name already exists', 409
                     
                     self.db_cursor.execute(
@@ -192,7 +193,7 @@ class API:
                 }
                 return json.dumps(body)
             except:
-                return 'There was an unexpected error', 500
+                return 'An unexpected error occured', 500
         
         @app.route('/delete', methods=['DELETE'])
         def delete():
@@ -213,7 +214,7 @@ class API:
                 
                 return 'Successfully deleted'
             except:
-                return 'There was an unexpected error', 500
+                return 'An unexpected error occured', 500
         
         @app.route('/search_name', methods=['POST'])
         def search_name():
@@ -224,6 +225,9 @@ class API:
                     name == None):
                     return 'No name received', 400
                 
+                if (_does_name_exist(name) == False):
+                    return 'Name not found', 404
+                
                 if (_is_name_expired(name) == True):
                     _delete_by_name(name)
                     return 'Name has expired', 410
@@ -231,16 +235,69 @@ class API:
                 if (_is_name_locked(name) == True):
                     return 'Data is currently locked. Refresh on other device.', 403
                 
-                if (_does_name_already_exist(name) == False):
-                    return 'Name not found', 404
-                
                 return 'Name found'
             except:
-                return 'There was an unexpected error', 500
+                return 'An unexpected error occured', 500
         
-        @app.route('/validate_key', methods=['POST'])
-        def validate_key():
-            return "hmm"
+        @app.route('/access_data', methods=['POST'])
+        def access_data():
+            try:
+                body = json.loads(request.get_data())
+                
+                # checks #            
+                if ('name' not in body):
+                    return 'name missing', 400
+                
+                if (body['name'] == ''):
+                        return 'name empty', 400
+                
+                if ('key' not in body):
+                    return 'key missing', 400
+                
+                if (body['key'] == ''):
+                    return 'key empty', 400
+                
+                name = body['name']
+                key = body['key']
+                
+                if (_does_name_exist(name) == False):
+                    return 'Name not found', 404
+                
+                if (_is_name_expired(name) == True):
+                    _delete_by_name(name)
+                    return 'Name has expired', 410
+                
+                if (_is_name_locked(name) == True):
+                    return 'Data is currently locked. Refresh on other device.', 403
+                ##########
+                
+                self.db_cursor.execute(
+                    'SELECT `id` FROM `data` JOIN `access` ON `id`=`data-id` WHERE `name`=? AND `access-key`=?',
+                    (name, key)
+                )
+                data_tuple = self.db_cursor.fetchone()
+                
+                if (data_tuple == None):
+                    _create_lock_entry(name)
+                    return 'Wrong access key. Data is locked. Refresh on other device.', 401
+                
+                id = data_tuple[0]
+                
+                self.db_cursor.execute(
+                    'SELECT * FROM `data` WHERE `id`=?',
+                    (id,)
+                )
+                data_tuple = self.db_cursor.fetchone()
+                
+                response = json.loads(json.dumps({
+                    'name': data_tuple[1],
+                    'data': data_tuple[2],
+                    'isTextOnly': data_tuple[3] == b'\x01' or data_tuple[3] == True
+                }))
+                
+                return response
+            except:
+                return 'An unexpected error occured', 500
         
         
         # H E L P E R S #
@@ -344,21 +401,6 @@ class API:
             except:
                 pass
         
-        def _create_lock_entry(bearer_token:str):
-            try:
-                self.db_cursor.execute(
-                    'SELECT `id` FROM `data` JOIN `access` ON `id`=`data-id` WHERE `token`=?',
-                    (bearer_token,)
-                )
-                id = self.db_cursor.fetchone()[0]
-                
-                self.db_cursor.execute(
-                    'INSERT `lock-entries` SET `data-id`=?',
-                    (id,)
-                )
-            except:
-                pass
-        
         def _remove_lock_entry(bearer_token:str):
             try:
                 self.db_cursor.execute(
@@ -374,7 +416,7 @@ class API:
             except:
                 pass
         
-        def _does_name_already_exist(name:str):
+        def _does_name_exist(name:str):
             try:
                 self.db_cursor.execute(
                     'SELECT `name` FROM `data` WHERE `name`=?',
@@ -448,6 +490,21 @@ class API:
                 return isLocked
             except:
                 return False
+        
+        def _create_lock_entry(name:str):
+            try:
+                self.db_cursor.execute(
+                    'SELECT `id` FROM `data` WHERE `name`=?',
+                    (name,)
+                )
+                id = self.db_cursor.fetchone()[0]
+                
+                self.db_cursor.execute(
+                    'INSERT `lock-entries` SET `data-id`=?',
+                    (id,)
+                )
+            except:
+                pass
 
         
         app.run(

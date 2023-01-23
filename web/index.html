@@ -106,7 +106,7 @@
 
                     <li id="list-access-key-search-field">
                         <label>
-                            <input id="access-key-search-field" type="text" placeholder="XXX XXX" maxlength="7" oninput="DNS.onInputAccessKeySearchField()"/>
+                            <input id="access-key-search-field" type="text" placeholder="XXX XXX" maxlength="7" oninput="DNS.onInputAccessKeySearchField();DNS.checkAccessDataButtonEnabled();"/>
                         </label>
                     </li>
 
@@ -174,12 +174,20 @@
                     <li id="list-btn-upload">
                         <label class="btn-upload">
                             <input id="fileUpload" type="file" multiple/>
-                            &#x21EA; Upload...
+                            &#x2bad; Upload...
                         </label>
                     </li>
 
+                    <li id="list-btn-copy-to-clipboard">
+                        <button type="button" id="btn-copy-to-clipboard" class="btn-emphasized" onclick="DNS.copyTextToClipboard()">Copy Text</button>
+                    </li>
+
+                    <li id="list-btn-download-all">
+                        <button type="button" id="btn-download-all" class="btn-emphasized" onclick="DNS.downloadAllFiles()">&#x2baf; Download all</button>
+                    </li>
+
                     <li id="list-btn-text-only">
-                        <button type="button" id="btn-text-only" class="btn-emphasized" onclick="DNS.changeMode('text-only')">Text only</button>
+                        <button type="button" id="btn-text-only" class="btn-emphasized" onclick="DNS.changeMode('text-only')">&#x2bab; Text only</button>
                     </li>
 
                     <li id="list-btn-submit">
@@ -191,7 +199,7 @@
                     </li>
 
                     <li id="list-btn-access">
-                        <button type="button" id="btn-access" class="btn-emphasized" onclick="DNS.accessData()">Access Data</button>
+                        <button type="button" id="btn-access" class="btn-emphasized" onclick="DNS.accessData()">&#x2bae; Access Data</button>
                     </li>
 
                 </ul>
@@ -207,7 +215,7 @@
 
         <div id="cookie-banner" class="cookie-banner">
             <p>
-                This website uses cookies to work its magic.
+                This website uses cookies to work its magic ✨
                 <button type="button" onclick="DNS.closeCookieBanner()">
                     I understand
                 </button>

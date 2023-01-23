@@ -375,6 +375,11 @@ input textarea:focus, input:focus {
     transition: 0.2s;
 }
 
+textarea {
+    max-width: 70vw;
+    min-width: 30vw;
+}
+
 #text-name {
     max-width: 70vw;
     min-width: 30vw;
@@ -458,6 +463,10 @@ textarea:focus {
     color: var(--orange-yellow);
     border-radius: 0;
     transition: 0.2s;
+}
+
+#btn-access {
+    margin-top: 2vh;
 }
 
 .btn-emphasized {
@@ -558,7 +567,7 @@ textarea:focus {
     }
     .btn-upload {
         font-size: 1.6em;
-    }    
+    }
     .btn-emphasized {
         font-size: 1.6em;
     }
@@ -651,6 +660,17 @@ hr {
 
 #access-key-simulation {
     font-size: 1.2em;
+}
+
+@media only screen and (max-height: 585px) {
+    #list-more-options {
+        margin-top: 40px;
+        margin-bottom: 10px;
+    }
+
+    #access-data-instructions {
+        display: none;
+    }
 }
 /*******************************************/
 
@@ -826,6 +846,7 @@ input::-webkit-inner-spin-button {
     width: 4.2em;
     color: var(--burnt-orange);
     text-shadow: -1px -1px 0 var(--eerie-black-d), 1px -1px 0 var(--eerie-black-d), -1px 1px 0 var(--eerie-black-d), 1px 1px 0 var(--eerie-black-d);
+    margin-top: 8vh;
 }
 
 #access-key-search-field::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
@@ -842,8 +863,33 @@ input::-webkit-inner-spin-button {
 }
 
 #access-key-search-btn {
-    margin-bottom: 20vh;
+    margin-bottom: 13vh;
     font-size: 1.8em;
+}
+
+#btn-copy-to-clipboard {
+    margin-bottom: 3vh;
+}
+
+#btn-download-all {
+    margin-bottom: 4vh;
+}
+
+@media only screen and (max-height: 585px) {
+    #btn-search {
+        margin-bottom: 40px;
+    }
+
+    #access-key-search-field {
+        margin-top: 20px;
+    }
+    #access-key-search-btn {
+        margin-bottom: 30px;
+    }
+
+    #btn-download-all {
+        margin-bottom: 20px;
+    }
 }
 /*******************************************/
 

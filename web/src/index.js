@@ -19,7 +19,9 @@ DNS.MODES = {
     textOnly: 'text-only',
     dataSent: 'data-sent',
     accessData: 'access-data',
-    enterKey: 'enter-key'
+    enterKey: 'enter-key',
+    viewReceivedText: 'view-received-text',
+    viewReceivedData: 'view-received-data'
 }
 DNS.MAX_FILES = 4;
 
@@ -203,7 +205,7 @@ DNS.processFiles = function(files) {
 
         const file = files[i];
         const number = DNS.files.length;
-        const listItem = DNS.createListItemForFile(`file-${number}`, file);
+        const listItem = DNS.createListItemForFile(`file-${number}`, file, DNS.showDeleteDialogForFile);
 
         fileList.insertBefore(listItem, fileList.children[fileList.children.length-1]);
         DNS.files.push(file);
@@ -250,6 +252,7 @@ DNS.closeAlert = function() {
 
     DNS.checkGoButtonEnabled();
     DNS.checkSearchButtonEnabled();
+    DNS.checkAccessDataButtonEnabled();
 };
 
 DNS.removeGlassPlate = function() {
@@ -259,7 +262,7 @@ DNS.removeGlassPlate = function() {
     }
 };
 
-DNS.createListItemForFile = function(id, file) {
+DNS.createListItemForFile = function(id, file, onClick) {
     const listItem = document.createElement('li');
     listItem.id = id;
     listItem.classList.add('file-list-item');
@@ -275,10 +278,12 @@ DNS.createListItemForFile = function(id, file) {
     text.innerHTML = DNS.shortenName(file.name, 12);
     listItem.appendChild(text);
 
-    listItem.onclick = function(evt) {
-        DNS.showDeleteDialogForFile(evt);
-    };
-
+    if (typeof onClick == 'function') {
+        listItem.onclick = function(evt) {
+            onClick(evt);
+        };
+    }
+        
     return listItem;
 };
 
@@ -307,7 +312,7 @@ DNS.shortenName = function(name, length) {
 
 DNS.isFileSelected = false;
 DNS.showDeleteDialogForFile = function(evt) {
-    const msgBox = document.getElementById('msg-box-delete');
+    const msgBox = document.getElementById('msg-box-delete-file');
     if (msgBox.style.display != 'none') {
         DNS.closeDeleteDialogForFile();
         return;
@@ -388,6 +393,10 @@ DNS.changeMode = function(mode) {
         'access-key',
         'access-key-search-field'
     ];
+    if (mode == DNS.MODES.enterKey) {
+        emptyElements.shift();
+    }
+
     for (let i in emptyElements) {
         const elem = document.getElementById(emptyElements[i]);
         elem.value = '';
@@ -436,8 +445,21 @@ DNS.changeMode = function(mode) {
             'btn-overview'
         ],
         'enter-key': [
+            'text-name',
             'access-key-search-field',
             'access-key-search-btn',
+            'btn-overview'
+        ],
+        'view-received-text': [
+            'text-name',
+            'data-textarea',
+            'btn-copy-to-clipboard',
+            'btn-overview'
+        ],
+        'view-received-data': [
+            'text-name',
+            'file-upload-list',
+            'btn-download-all',
             'btn-overview'
         ]
     };
@@ -454,13 +476,16 @@ DNS.changeMode = function(mode) {
             .display = 'block';
     }
 
+    DNS.handleDisableTitle(mode);
     DNS.handleModeDataSent(mode == DNS.MODES.dataSent);
+    DNS.handleModeViewReceived(mode == DNS.MODES.viewReceivedText || mode == DNS.MODES.viewReceivedData);
 
     DNS.mode = mode;
 
     DNS.focusTitle();
     DNS.checkGoButtonEnabled();
     DNS.checkSearchButtonEnabled();
+    DNS.checkAccessDataButtonEnabled();
 };
 
 DNS.focusTitle = function() {
@@ -488,11 +513,23 @@ DNS.disableElement = function(element) {
     elem.style.opacity = 0.7;
 };
 
+DNS.handleDisableTitle = function(mode) {
+    const textName = document.getElementById('text-name');
+
+    switch (mode) {
+        case DNS.MODES.dataSent:
+        case DNS.MODES.enterKey:
+        case DNS.MODES.viewReceivedText:
+        case DNS.MODES.viewReceivedData:
+            textName.disabled = true;
+            break;
+        default:
+            textName.disabled = false;
+    };
+};
+
 DNS.handleModeDataSent = function(isModeDataSent) {
     DNS.areFilesDroppable = !isModeDataSent;
-
-    const textName = document.getElementById('text-name');
-    textName.disabled = isModeDataSent;
 
     if (isModeDataSent == false) {
         return;
@@ -519,6 +556,16 @@ DNS.handleModeDataSent = function(isModeDataSent) {
         }
     );
 };
+
+DNS.handleModeViewReceived = function(isModeViewReceived) {
+    const textarea = document.getElementById('data-textarea');
+    const btnPaste = document.getElementById('btn-copy-to-textarea');
+    const btnAddFile = document.getElementById('file-upload-add');
+
+    textarea.disabled = isModeViewReceived;
+    btnPaste.style.display = isModeViewReceived ? 'none' : 'block';
+    btnAddFile.style.display = isModeViewReceived ? 'none' : 'inline-block';
+}
 
 DNS.showMoreOptions = function() {
     const moreOptions = document.getElementById('list-more-options');
@@ -656,18 +703,22 @@ DNS.uploadData = async function() {
 
     switch (DNS.mode) {
         case (DNS.MODES.fileUpload):
+
+            const fileArr = [];
+
             const toBase64 = file => new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = () => resolve(reader.result);
                 reader.onerror = error => reject(error);
             });
-
-            const fileArr = [];
             try {
                 for (let i=0; i<DNS.files.length; i++) {
-                    const base64 = await toBase64(DNS.files[i]);
-                    fileArr.push(base64);
+                    const file = DNS.files[i];
+                    const base64 = await toBase64(file);
+                    const fileString = `name:${file.name};${base64}`;
+                    
+                    fileArr.push(fileString);
                 }
             } catch(e) {
                 console.error(e);
@@ -775,7 +826,7 @@ DNS.checkSearchButtonEnabled = function() {
 
     const textName = document.getElementById('text-name');
     if (isEnabled == true &&
-        textName.value.length == 0) {
+        textName.value.length == 7) {
         isEnabled = false;
         title = 'Name missing';
     }
@@ -803,22 +854,27 @@ DNS.searchName = function() {
     );
 };
 
-DNS.validateKey = function() {
-    const keyField = document.getElementById('access-key-search-field');
-    const accessKey = keyField.value.replace(' ', '');
+DNS.checkAccessDataButtonEnabled = function() {
+    let isEnabled = true;
+    let title = 'Access Data';
 
-    // TODO button enablen/disablen
-    // TODO namen besorgen / vorher merken
-    
-    DNS.httpSendAsync('POST', 'validate_key',
-    accessKey,
-        function(resp) {
-            
-        },
-        function(resp, status) {
-            
-        }
-    );
+    if (isEnabled == true &&
+        DNS.mode != DNS.MODES.enterKey) {
+        isEnabled = false;
+        title = 'Not possible in this mode';
+    }
+
+    const keyField = document.getElementById('access-key-search-field');
+    if (isEnabled == true &&
+        keyField.value.length != 7) {
+        isEnabled = false;
+        title = 'Enter the key from your other device';
+    }
+
+    const accessBtn = document.getElementById('access-key-search-btn');
+    accessBtn.disabled = !isEnabled;
+    accessBtn.style.opacity = isEnabled ? '100%' : '70%';
+    accessBtn.title = title;
 };
 
 DNS.onInputAccessKeySearchField = function() {
@@ -831,7 +887,235 @@ DNS.onInputAccessKeySearchField = function() {
     });
 };
 
+DNS.validateKey = function() {
+    const keyField = document.getElementById('access-key-search-field');
+    const accessKey = keyField.value.replace(' ', '');
 
+    const textName = document.getElementById('text-name');
+
+    const body = JSON.stringify({
+        name: textName.value,
+        key: accessKey
+    });
+    
+    DNS.httpSendAsync('POST', 'access_data',
+    body,
+        function(resp) {
+            DNS.handleReceivedData(resp);
+        },
+        function(resp, status) {
+            DNS.changeMode(DNS.MODES.accessData);
+        }
+    );
+};
+
+DNS.handleReceivedData = function(response) {
+    const resp = DNS.processReceivedData(response);
+    
+    if (resp.isTextOnly == true) {
+        DNS.changeMode(DNS.MODES.viewReceivedText);
+        DNS.displayReceivedText(resp.data);
+    } else {
+        DNS.changeMode(DNS.MODES.viewReceivedData);
+        DNS.displayReceivedData(resp.data);
+    }
+
+    const textName = document.getElementById('text-name');
+    textName.value = resp.name;
+};
+
+DNS.processReceivedData = function(response) {
+    const resp = JSON.parse(response);
+
+    if (typeof resp.name == 'undefined' ||
+        resp.name == null ||
+        resp.name == '' ||
+        typeof resp.data == 'undefined' ||
+        resp.data == null ||
+        resp.data == '' ||
+        typeof resp.isTextOnly == 'undefined' ||
+        resp.isTextOnly == null ||
+        (resp.isTextOnly != true &&
+        resp.isTextOnly != false)) {
+            DNS.showAlert('Received data is incomplete, please try again.');
+            DNS.changeMode(DNS.MODES.accessData);
+    }
+
+    const name = resp.name;
+    const isTextOnly = resp.isTextOnly;
+
+    let data = null;
+    if (isTextOnly == true) {
+        data = resp.data;
+    } else {
+        try {
+            data = JSON.parse(resp.data);
+        } catch (e) {
+            DNS.showAlert('Data is corrupted');
+            DNS.changeMode(DNS.MODES.overview);
+        }
+    }
+
+    const processedData = {
+        name: name,
+        data: data,
+        isTextOnly: isTextOnly
+    };
+    return processedData;
+};
+
+DNS.displayReceivedText = function(text) {
+    DNS.changeMode(DNS.MODES.viewReceivedText);
+
+    const textarea = document.getElementById('data-textarea');
+
+    textarea.value = text;
+};
+
+DNS.displayReceivedData = function(data) {
+    DNS.changeMode(DNS.MODES.viewReceivedData);
+
+    DNS.files = [];
+    const fileList = document.getElementById('file-upload-list');
+
+    for (let i=0; i < data.length; i++) {
+        const fileString = data[i];
+        const regex = new RegExp('name:(.*);(data:.*base64,.*)','g');
+        const matches = regex.exec(fileString);
+
+        if (matches == null) {
+            console.error('There was an error while decoding a file', fileString);
+            continue;
+        }
+
+        if (matches.length != 3) {
+            console.error('There was an error while decoding a file', fileString);
+            continue;
+        }
+        
+        const name = matches[1];
+        const dataUrl = matches[2];
+
+        let file = null;
+
+        try {
+            file = DNS.dataURLToFile(dataUrl, name);
+        } catch(e) {
+            console.error('There was an error while decoding a file', fileString);
+            continue;
+        }
+
+        if (file == null) {
+            console.error('There was an error while decoding a file', fileString);
+            continue;
+        }
+
+        const number = DNS.files.length;
+        const listItem = DNS.createListItemForFile(`file-${number}`, file, DNS.downloadFile);
+
+        fileList.insertBefore(listItem, fileList.children[fileList.children.length-1]);
+        DNS.files.push(file);
+    }
+};
+
+DNS.dataURLToFile = function(dataUrl, filename) {
+    const arr = dataUrl.split(','),
+        mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]);
+    let n = bstr.length,
+        u8arr = new Uint8Array(n);
+        
+    while(n--){
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+    
+    const file = new File([u8arr], filename, {type:mime});
+    return file
+};
+
+DNS.downloadFile = async function(evt) {
+    const id = evt.currentTarget.id
+    
+    const regex = new RegExp('file-(\\d+)');
+    const match = regex.exec(id);
+
+    if (typeof match == 'undefined') {
+        DNS.showAlert('There was an error downloading the file');
+    }
+
+    if (match.length != 2) {
+        DNS.showAlert('There was an error downloading the file');
+    }
+
+    const index = match[1];
+    const file = DNS.files[index];
+
+    const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+
+    let base64 = null;
+    try {
+        base64 = await toBase64(file);
+    } catch(e) {
+        console.error(e);
+        DNS.showAlert('There was an error downloading the file');
+        return;
+    }
+
+    DNS.downloadDataUrl(base64, file.name);
+};
+
+DNS.downloadDataUrl = function(dataUrl, filename) {
+    const link = document.createElement("a");
+    link.download = filename;
+    link.href = dataUrl;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    delete link;
+};
+
+DNS.copyTextToClipboard = function() {
+    const textarea = document.getElementById('data-textarea');
+
+    navigator.clipboard.writeText(textarea.value)
+        .then(function() {
+            textarea.style.borderColor = DNS.COLORS['burnt-orange'];
+
+            setTimeout(function() {
+                textarea.style.borderColor = DNS.COLORS['eerie-black-d'];
+            }, 1000);
+        });
+};
+
+DNS.downloadAllFiles = async function() {
+
+    for (let i=0; i < DNS.files.length; i++) {
+        const file = DNS.files[i];
+
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+
+        let base64 = null;
+        try {
+            base64 = await toBase64(file);
+        } catch(e) {
+            console.error(e);
+            DNS.showAlert('There was an error downloading the file');
+            continue;
+        }
+
+        DNS.downloadDataUrl(base64, file.name);
+    }
+};
 
 DNS.closeCookieBanner = function() {
     DNS.hideElement('cookie-banner');
