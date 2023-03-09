@@ -1,6 +1,6 @@
 const DNS = {};
 
-DNS.API_ENDPOINT = 'https://api.drag-n-share.com/';
+DNS.API_ENDPOINT = 'http://localhost:41419/API/';
 
 DNS.COLORS = {
     'cultured': '#F1EDEE',
