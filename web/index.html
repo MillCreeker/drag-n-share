@@ -30,7 +30,7 @@
             <ul class="menu">
                 <li>
                     <button type="button" id="btn-menu" onclick="openMenu()">
-                        <img height="65em" alt="&ctdot;" src="./img/menu_icon.png">
+                        <img height="65em" alt="Menu" src="./img/menu_icon.png">
                     </button>
                 </li>
             </ul>
@@ -90,6 +90,23 @@
             </ul>            
         </div>
 
+        <div id="pop-up-donation" class="msg-box donate-pop-up" style="display:none">
+            <ul>
+                <li>
+                    <p>
+                        It seems like you enjoy Drag-<span class="orange">n</span>-Share ❤️
+                        <br><br>
+                        We'd be flattered ✨
+                        <br>
+                        if you were to help us keep the servers up!
+                    </p>
+                </li>
+                <li>
+                    <button type="button" class="btn-emphasized btn-donate rainbow" onclick=DNS.onclickDonationPopUpBtn()>Donate</button>
+                </li>
+            </ul>
+        </div>
+
         <div id="dropContainer" class="dropContainer">
             <div>
                 <ul id="dropList">
@@ -98,10 +115,11 @@
                         <label class="text-name">
                             <input id="text-name" type="text" placeholder="Name" maxlength="255" oninput="DNS.checkGoButtonEnabled();DNS.checkSearchButtonEnabled()"/>
                         </label>
+                        <p id="name-description" class="description">Used to access your data later</p>
                     </li>
 
                     <li id="list-btn-search">
-                        <button type="button" id="btn-search" class="btn-emphasized" onclick="DNS.searchName()">&#x2bab; Search</button>
+                        <button type="button" id="btn-search" class="btn-emphasized" onclick="DNS.searchName()">Search</button>
                     </li>
 
                     <li id="list-access-key-search-field">
@@ -111,7 +129,7 @@
                     </li>
 
                     <li id="list-access-key-search-btn">
-                        <button type="button" id="access-key-search-btn" class="btn-emphasized" onclick="DNS.validateKey()">&#x2ba9; Access Data</button>
+                        <button type="button" id="access-key-search-btn" class="btn-emphasized" onclick="DNS.validateKey()">Access Data</button>
                     </li>
 
                     <li id="list-access-key">
@@ -174,7 +192,7 @@
                     <li id="list-btn-upload">
                         <label class="btn-upload">
                             <input id="fileUpload" type="file" multiple/>
-                            &#x2bad; Upload...
+                            Share Files
                         </label>
                     </li>
 
@@ -183,23 +201,24 @@
                     </li>
 
                     <li id="list-btn-download-all">
-                        <button type="button" id="btn-download-all" class="btn-emphasized" onclick="DNS.downloadAllFiles()">&#x2baf; Download all</button>
+                        <button type="button" id="btn-download-all" class="btn-emphasized" onclick="DNS.downloadAllFiles()">Download all</button>
                     </li>
 
                     <li id="list-btn-text-only">
-                        <button type="button" id="btn-text-only" class="btn-emphasized" onclick="DNS.changeMode('text-only')">&#x2bab; Text only</button>
+                        <button type="button" id="btn-text-only" class="btn-emphasized" onclick="DNS.changeMode('text-only')">Share Text</button>
                     </li>
 
                     <li id="list-btn-submit">
-                                <button type="button" id="btn-submit" class="btn-emphasized" onclick="DNS.submitData()">&#x2bac; Go</button>
+                        <button type="button" id="btn-submit" class="btn-emphasized" onclick="DNS.submitData()">Go</button>
                     </li>
 
                     <li id="list-btn-overview">
-                        <button type="button" id="btn-overview" class="btn-ghost" onclick="DNS.changeMode('overview')">&#x2ba8; Overview</button>
+                        <button type="button" id="btn-overview" class="btn-ghost" onclick="DNS.changeMode('overview')">Overview</button>
                     </li>
 
                     <li id="list-btn-access">
-                        <button type="button" id="btn-access" class="btn-emphasized" onclick="DNS.accessData()">&#x2bae; Access Data</button>
+                        <button type="button" id="btn-access" class="btn-emphasized" onclick="DNS.accessData()">Access Data</button>
+                        <p id="btn-access-description" class="description">Use to retrieve files or text later</p>
                     </li>
 
                 </ul>

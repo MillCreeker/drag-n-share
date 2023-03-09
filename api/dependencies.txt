@@ -1,3 +1,0 @@
-flask
-mariadb
-pathlib

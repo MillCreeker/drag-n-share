@@ -52,9 +52,13 @@
             <br>
             <br>
             <br>
-            <h1 class="heading-emphasized">404</h1>
-            <h2>Seems like something went wrong ...</h2>
+            <h1 class="heading-emphasized">500</h1>
+            <h2>Seems like there was an issue on our part ...</h2>
+            
+            <br>
+            
             <h3>Return to <a href="https://www.drag-n-share.com">main page</a></h3>
+            <h3>Or tell us what happened at <a href="mailto:support@drag-n-share.com" target="_blank" rel="noopener">Support@Drag-<span class="orange">n</span>-Share.com</a></h3>
         </div>
         
 

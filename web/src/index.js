@@ -1,6 +1,6 @@
 const DNS = {};
 
-DNS.API_ENDPOINT = 'http://localhost:41419/';
+DNS.API_ENDPOINT = 'https://api.drag-n-share.com/';
 
 DNS.COLORS = {
     'cultured': '#F1EDEE',
@@ -476,6 +476,7 @@ DNS.changeMode = function(mode) {
             .display = 'block';
     }
 
+    DNS.showNameDescription(mode == DNS.MODES.fileUpload || mode == DNS.MODES.textOnly);
     DNS.handleDisableTitle(mode);
     DNS.handleModeDataSent(mode == DNS.MODES.dataSent);
     DNS.handleModeViewReceived(mode == DNS.MODES.viewReceivedText || mode == DNS.MODES.viewReceivedData);
@@ -511,6 +512,11 @@ DNS.disableElement = function(element) {
     elem.style['pointer-events'] = 'none';
     elem.style['-moz-drag-over'] = 'none';
     elem.style.opacity = 0.7;
+};
+
+DNS.showNameDescription = function(doShow) {
+    const nameDescription = document.getElementById('name-description');
+    nameDescription.style.display = doShow ? 'block' : 'none';
 };
 
 DNS.handleDisableTitle = function(mode) {
@@ -565,6 +571,8 @@ DNS.handleModeViewReceived = function(isModeViewReceived) {
     textarea.disabled = isModeViewReceived;
     btnPaste.style.display = isModeViewReceived ? 'none' : 'block';
     btnAddFile.style.display = isModeViewReceived ? 'none' : 'inline-block';
+
+    if (isModeViewReceived == true) DNS.showDonationsPupUp();
 }
 
 DNS.showMoreOptions = function() {
@@ -577,6 +585,16 @@ DNS.showMoreOptions = function() {
     dataSentOptions.style.display = 'block';
     accessDataInstructions.style.display = 'block';
     textName.disabled = false;
+};
+
+
+DNS.showDonationsPupUp = function() {
+    DNS.showElement('pop-up-donation');
+    DNS.createGlassPlate(DNS.hideDonationsPupUp);
+};
+DNS.hideDonationsPupUp = function() {
+    DNS.removeGlassPlate();
+    DNS.hideElement('pop-up-donation');
 };
 
 
@@ -666,6 +684,10 @@ DNS.httpSendAsync = function (type, route, body, successFunc, errorFunc) {
             } else if (typeof errorFunc == 'function') {
                 let msg = xmlHttp.responseText
                 console.error(msg);
+
+                if (msg.length == 0) {
+                    msg = 'The servers are currently unavailable\nWe\'re working on it';
+                }
 
                 if (msg.length > 75) {
                     msg = 'An unexpected error occured';
@@ -913,10 +935,8 @@ DNS.handleReceivedData = function(response) {
     const resp = DNS.processReceivedData(response);
     
     if (resp.isTextOnly == true) {
-        DNS.changeMode(DNS.MODES.viewReceivedText);
         DNS.displayReceivedText(resp.data);
     } else {
-        DNS.changeMode(DNS.MODES.viewReceivedData);
         DNS.displayReceivedData(resp.data);
     }
 
@@ -1123,9 +1143,12 @@ DNS.closeCookieBanner = function() {
     DNS.createCookie('readCookieDisclaimer', 'true');
 };
 
+DNS.onclickDonationPopUpBtn = function() {
+    DNS.hideElement('pop-up-donation');
+    DNS.removeGlassPlate();
 
-
-
+    window.open('https://ko-fi.com/millcreeker');
+};
 
 
 

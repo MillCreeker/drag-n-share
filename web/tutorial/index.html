@@ -36,7 +36,7 @@
             </ul>
         </nav>
     </header>
-    <body>
+    <body class="background-img">
         <div id="menu" class="overlay">
             <a onclick="closeNav()">&times;</a>
             <div class="overlay-content">
@@ -48,7 +48,120 @@
             </div>
         </div>
 
-        <p>Coming soon ...</p>
+        <div class="paragraph">
+            <h1>Tutorial</h1>
+            
+            <p>
+                Are you unsure where to start, or don’t know how to handle a specific error?
+                <br>
+                That’s not a problem at all.
+                Just pick what you’re trying to do from the list below and get right back to work.
+            </p>
+
+            <ul class="unstyled-list">
+                <li><a href="#general">General Overview</a></li>
+                <li><a href="#upload-file">Upload File</a></li>
+                <li><a href="#access-file">Access File</a></li>
+                <li><a href="#upload-text">Upload Text</a></li>
+                <li><a href="#access-text">Access Text</a></li>
+                <li><a href="#unlock-data">My data is locked</a></li>
+            </ul>
+            <br>
+            <br>
+            <br>
+
+            <h2 id="general">General Overview</h2>
+            <p>
+                Drag-<span class="orange">n</span>-share lets you easily share data between 2 devices.
+                After 5 minutes of uploading it, it will be deleted from our servers.
+                All deletion (including manual) are permanent – no traces of your data will be left anywhere.
+                <br>
+                <br>
+                This service is only intended for sharing data quick and easily.
+                It is – by design – not intended for permanent storage of any kind.
+                Just a simple way to share files or text, the most straight forward way there is.
+                <br>
+                No registration, no fees, no limitations in frequency.
+                </p>
+
+            <h2 id="upload-file">Upload File</h2>
+            <img src="../vid/file_upload.gif" alt="Upload File" loading="lazy" class="tutorial-gif">
+            <p>
+                Just drag and drop the file(s) you want into the drop area.
+                You can upload up to 4 files, with a maximum size of 1 GB.
+                Alternatively, you can also you the “Upload” button to do so.
+                <br>
+                <br>
+                On the next screen, give your data a unique name.
+                On the next screen, you can add more files using the “+” or click on a file to delete it.
+                <br>
+                <br>
+                When you’re finished, just press “Go” and you’re done on this device.
+                Follow the instruction below on your other device to access your files from there.
+            </p>
+
+            <h2 id="access-file">Access File</h2>
+            <img src="../vid/file_access.gif" alt="Access File" loading="lazy" class="tutorial-gif">
+            <p>
+                Click on “Access Data” and search for the name you just gave your uploaded data.
+                Enter the access key displayed on your other device (where you uploaded your files) and click on “Access Data” again.
+                <br>
+                <br>
+                You can now download all your files at once with the button “Download all”.
+                Alternatively, you can download files individually by clicking on them.
+            </p>
+
+            <h2 id="upload-text">Upload Text</h2>
+            <img src="../vid/text_only_upload.gif" alt="Upload Text" loading="lazy" class="tutorial-gif">
+            <p>
+                Click on “Text only”, give your data a unique name, and paste your text into the textarea below.
+                You can also use the &boxbox; icon for this.
+                <br>
+                <br>
+                When you’re finished, just press “Go” and you’re done on this device.
+                Follow the instruction below on your other device to access your files from there.
+            </p>
+
+            <h2 id="access-text">Access Text</h2>
+            <img src="../vid/text_only_access.gif" alt="Access Text" loading="lazy" class="tutorial-gif">
+            <p>
+                Click on “Access Data” and search for the name you just gave your uploaded text.
+                Enter the access key displayed on your other device (where you uploaded your text) and click on “Access Data” again.
+                <br>
+                <br>
+                You can now copy your text to your clipboard with the button “Copy Text”.
+            </p>
+
+            <h2 id="unlock-data">My data is locked</h2>
+            <img src="../vid/lock_data.gif" alt="Locking Data" loading="lazy" class="tutorial-gif">
+            <p>
+                For security reasons, your data will be safely locked, when someone tries to access it with the wrong key.
+                That’s no issue at all, though.
+                <br>
+                Just follow the instructions below …
+            </p>
+            <br>
+            <br>
+
+            <img src="../vid/refresh.gif" alt="Refresh" loading="lazy" class="tutorial-gif">
+            <p>
+                On the device that displays the access key, click on “More Options”.
+                This will give you access to additional features.
+                <br>
+                <br>
+                For this scenario, just press the &circlearrowleft; button.
+                This will generate a new access key for your data, which should work on other devices now.
+                The data is no longer locked.
+                <br>
+                <br>
+                Other options you gain here, are the “Delete” button, which deletes your data on the server permanently.
+                <br>
+                You can also change the name of your data now.
+                If someone continuously tries to gain access to your data (and thereby, keeps locking it), it is recommended to change the name.
+                With this, the third party will have to guess the name again, and will not be able to lock it further.
+            </p>
+
+        </div>
         
 
         <script src="../src/menu.js" async defer></script>

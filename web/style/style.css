@@ -106,6 +106,13 @@ footer * {
 }
 
 
+img {
+    -webkit-user-drag: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
 
 button {
     background-color: inherit;
@@ -124,17 +131,24 @@ button {
 }
 
 .background-img {
-    background-image: url('../img/logo_outlines.png');
+    background-image: url('../img/logo_outlines_faded.png');
     background-repeat: no-repeat;
     background-position: center;
     background-size: 35vh;
     background-attachment: fixed;
+    /* opacity: .5; */
 }
 
 
 /* L I N K */
 a {
     font-weight: bold;
+
+    -webkit-user-drag: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 /* unvisited link */
@@ -155,6 +169,10 @@ a:hover {
 /* selected link */
 a:active {
     color: var(--burnt-orange);
+}
+
+h1 {
+    color: var(--orange-yellow);
 }
 /*******************************************/
 
@@ -334,14 +352,6 @@ header nav li a:hover {
     transition: 0.2s;
 }
 
-.file-list-item img {
-    -webkit-user-drag: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
 .file-list-item:hover {
     color: var(--orange-yellow);
 }
@@ -387,6 +397,11 @@ textarea {
 
 input[type="file"] {
     display: none;
+}
+
+.description {
+    margin: 0;
+    font-size: 0.9em;
 }
 
 .file-list li {
@@ -466,7 +481,7 @@ textarea:focus {
 }
 
 #btn-access {
-    margin-top: 2vh;
+    margin-top: 4vh;
 }
 
 .btn-emphasized {
@@ -563,7 +578,7 @@ textarea:focus {
 
 @media only screen and (max-width: 350px) {
     .dropContainer {
-        background-size: 20vh;
+        background-size: 30vh;
     }
     .btn-upload {
         font-size: 1.6em;
@@ -577,6 +592,11 @@ textarea:focus {
 }
 
 @media (pointer:none), (pointer:coarse) {
+    .dropContainer {
+        height: 55vh;
+        background-size: 30vh;
+    }
+
     .btn-upload, .btn-ghost {
         background-color: rgb(26,26,26, 0.7);
     }
@@ -662,7 +682,7 @@ hr {
     font-size: 1.2em;
 }
 
-@media only screen and (max-height: 585px) {
+@media only screen and (max-height: 745px) {
     #list-more-options {
         margin-top: 40px;
         margin-bottom: 10px;
@@ -875,7 +895,7 @@ input::-webkit-inner-spin-button {
     margin-bottom: 4vh;
 }
 
-@media only screen and (max-height: 585px) {
+@media only screen and (max-height: 745px) {
     #btn-search {
         margin-bottom: 40px;
     }
@@ -932,6 +952,24 @@ input::-webkit-inner-spin-button {
     color: var(--lemon);
     outline-style: none;
 }
+
+.unstyled-list {
+    list-style: none;
+}
+
+.tutorial-gif {
+    height: 55vh;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+
+    border-style: solid;
+    border-color: var(--cultured);
+    border-width: 3px;
+    border-radius: 2px;
+
+    box-shadow: 5px 5px 5px var(--eerie-black-l);
+}
 /*******************************************/
 
 /* C O O K I E   B A N N E R */
@@ -969,6 +1007,14 @@ input::-webkit-inner-spin-button {
 .paragraph {
     width: 50%;
     margin: auto;
+    padding: 40px;
+    padding-top: 5px;
+    background: linear-gradient(
+        to bottom left,
+        rgba(26, 26, 26, 0) 0%,
+        rgba(26, 26, 26, .3) 50%,
+        rgba(26, 26, 26, 0) 100%
+    );
 }
 
 .heading-emphasized {
@@ -978,7 +1024,61 @@ input::-webkit-inner-spin-button {
 
 @media only screen and (max-width: 700px) {
     .paragraph {
-        width: 90%;
+        width: 80%;
+        margin: auto;
+    }
+}
+/*******************************************/
+/* D O N A T I O N */
+.donate-pop-up {
+    z-index: 3;
+    height: 200px;
+    width: 350px;
+    margin-top: -100px;
+    margin-left: -175px;
+}
+
+.btn-donate {
+    background-color: var(--middle-green);
+}
+
+.rainbow:hover{
+    color: var(--cultured);
+    text-shadow: -1px -1px 0 var(--eerie-black-d), 1px -1px 0 var(--eerie-black-d), -1px 1px 0 var(--eerie-black-d), 1px 1px 0 var(--eerie-black-d);
+
+    background-image:     linear-gradient(
+        to right, 
+        #E7484F,
+        #E7484F 16.65%,
+        #F68B1D 16.65%,
+        #F68B1D 33.3%,
+        #FCED00 33.3%,
+        #FCED00 49.95%,
+        #009E4F 49.95%,
+        #009E4F 66.6%,
+        #00AAC3 66.6%,
+        #00AAC3 83.25%,
+        #732982 83.25%,
+        #732982 100%,
+        #E7484F 100%
+    );
+    animation:slidebg 2s linear infinite;
+    transform: skewX(-5deg);
+}
+
+@keyframes slidebg {
+    to {
+        background-position:250px;
+    }
+}
+
+@media only screen and (max-width: 420px) {
+    .donate-pop-up {
+        padding: 0;
+        height: 300px;
+        width: 200px;
+        margin-top: -150px;
+        margin-left: -100px;
     }
 }
 /*******************************************/
