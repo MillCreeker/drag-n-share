@@ -9,20 +9,32 @@ import uuid
 import string
 import random
 
-class API:
+class API:        
     def __init__(self):        
+        self.establish_db_connection()
+    
+    def establish_db_connection(self):
         self.db_connection = pymysql.connect(
             host=Config.get('DB_HOST'),
             database=Config.get('DB_DATABASE'),
             user=Config.get('DB_USER'),
             password=Config.get('DB_PW')
         )
-        
+    
         self.db_cursor = self.db_connection.cursor()
     
     def __del__(self):
         self.db_connection.close()
     
+    
+    def ensure_db_connection(self):
+        try:
+            self.db_cursor.execute(
+                'SELECT `id` FROM `data`'
+            )
+            data_tuple = self.db_cursor.fetchone()
+        except:
+            self.establish_db_connection()
     
     def _gen_access_key(self, real_key=None):
         key = random.randint(100000, 999999)
@@ -52,6 +64,7 @@ class API:
     
     # D B   H E L P E R S #
     def _is_authorized(self, bearer_token:str):
+        self.ensure_db_connection()
         try:
             self.db_cursor.execute(
                 'SELECT * FROM `data` JOIN `access` ON `id`=`data-id` WHERE `token`=%s',
@@ -65,6 +78,7 @@ class API:
             return False
     
     def _is_expired(self, bearer_token:str):
+        self.ensure_db_connection()
         try:
             self.db_cursor.execute(
                 'SELECT `timestamp` FROM `data` JOIN `access` ON `id`=`data-id` WHERE `token`=%s',
@@ -88,6 +102,7 @@ class API:
             return True
     
     def _is_locked(self, bearer_token:str):
+        self.ensure_db_connection()
         try:
             self.db_cursor.execute(
                 'SELECT `lock-entries`.`data-id` FROM `lock-entries` JOIN `access` ON `access`.`data-id`=`lock-entries`.`data-id` WHERE `token`=%s',
@@ -101,6 +116,7 @@ class API:
             return False
     
     def _get_data(self, bearer_token:str):
+        self.ensure_db_connection()
         try:
             self.db_cursor.execute(
                 'SELECT `id`, `name`, `data`, `isTextOnly`, `access-key` FROM `data` JOIN `access` ON `id`=`data-id` WHERE `token`=%s',
@@ -127,6 +143,7 @@ class API:
             return None
     
     def _delete_data(self, bearer_token:str):
+        self.ensure_db_connection()
         try:
             self.db_cursor.execute(
                 'SELECT `id` FROM `data` JOIN `access` ON `id`=`data-id` WHERE `token`=%s',
@@ -152,6 +169,7 @@ class API:
             pass
     
     def _remove_lock_entry(self, bearer_token:str):
+        self.ensure_db_connection()
         try:
             self.db_cursor.execute(
                 'SELECT `id` FROM `data` JOIN `access` ON `id`=`data-id` WHERE `token`=%s',
@@ -167,6 +185,7 @@ class API:
             pass
     
     def _does_name_exist(self, name:str):
+        self.ensure_db_connection()
         try:
             self.db_cursor.execute(
                 'SELECT `name` FROM `data` WHERE `name`=%s',
@@ -176,9 +195,11 @@ class API:
             
             return True
         except:
+            self.establish_db_connection()
             return False
     
     def _is_name_expired(self, name:str):
+        self.ensure_db_connection()
         try:         
             self.db_cursor.execute(
                 'SELECT `timestamp` FROM `data` WHERE `name`=%s',
@@ -202,6 +223,7 @@ class API:
             return False
     
     def _delete_by_name(self, name:str):
+        self.ensure_db_connection()
         try:
             self.db_cursor.execute(
                 'SELECT `id` FROM `data` WHERE `name`=%s',
@@ -228,6 +250,7 @@ class API:
             pass
     
     def _is_name_locked(self, name:str):
+        self.ensure_db_connection()
         try:
             self.db_cursor.execute(
                 'SELECT `lock-entries`.`data-id` FROM `lock-entries` JOIN `data` ON `data-id`=`id` WHERE `name`=%s',
@@ -242,6 +265,7 @@ class API:
             return False
     
     def _create_lock_entry(self, name:str):
+        self.ensure_db_connection()
         try:
             self.db_cursor.execute(
                 'SELECT `id` FROM `data` WHERE `name`=%s',
@@ -267,13 +291,14 @@ def default():
     return 'You \'bout to witness API in its most purest Most rawest form, flow almost flawless'
 
 @app.route(Config.get('API_PATH')+'/ping', methods=['GET'])
-def ping():
+def ping():    
     timestamp = time.time()
     return str(timestamp)
 
 
 @app.route(Config.get('API_PATH')+'/upload_data', methods=['POST'])
 def upload_data():
+    api.ensure_db_connection()
     try:
         body = json.loads(request.get_data())
         
@@ -333,6 +358,7 @@ def upload_data():
 
 @app.route(Config.get('API_PATH')+'/get_access_key_and_name', methods=['GET'])
 def get_access_key_and_name():
+    api.ensure_db_connection()
     try:
         bearer_token = request.headers.get('Access')
         if (bearer_token == ''):
@@ -360,6 +386,7 @@ def get_access_key_and_name():
 
 @app.route(Config.get('API_PATH')+'/refresh', methods=['POST'])
 def refresh():
+    api.ensure_db_connection()
     try:
         bearer_token = request.headers.get('Access')
         if (bearer_token == ''):
@@ -408,6 +435,7 @@ def refresh():
 
 @app.route(Config.get('API_PATH')+'/delete', methods=['DELETE'])
 def delete():
+    api.ensure_db_connection()
     try:
         bearer_token = request.headers.get('Access')
         if (bearer_token == ''):
@@ -429,6 +457,7 @@ def delete():
 
 @app.route(Config.get('API_PATH')+'/search_name', methods=['POST'])
 def search_name():
+    api.ensure_db_connection()
     try:
         name = request.get_data()
         
@@ -452,6 +481,7 @@ def search_name():
 
 @app.route(Config.get('API_PATH')+'/access_data', methods=['POST'])
 def access_data():
+    api.ensure_db_connection()
     try:
         body = json.loads(request.get_data())
         
