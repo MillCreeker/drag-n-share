@@ -18,7 +18,8 @@ class API:
             host=Config.get('DB_HOST'),
             database=Config.get('DB_DATABASE'),
             user=Config.get('DB_USER'),
-            password=Config.get('DB_PW')
+            password=Config.get('DB_PW'),
+            autocommit=True
         )
     
         self.db_cursor = self.db_connection.cursor()
