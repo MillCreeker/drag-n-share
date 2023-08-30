@@ -1,4 +1,11 @@
 # [Drag-n-Share](https://drag-n-share.com)
+
+This repo is obsolete!
+Check out the newer ones:
+- [Frontend](https://github.com/MillCreeker/Drag-n-Share-Frontend)
+- [Backend](https://github.com/MillCreeker/Drag-n-Share-Backend)
+
+
 ## About
 I’m pretty sure you already know what the deal is, if not, check [this](https://drag-n-share.com/about/) out.
 It’s important to mention that – if you use any of this code – it is only allowed under the [GNU license](https://www.gnu.org/licenses/gpl-3.0.en.html).\
